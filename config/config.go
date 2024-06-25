@@ -45,7 +45,7 @@ func Load() Config {
 
 	config := Config{}
 
-	config.ServiceName = cast.ToString(getOrReturnDefaultValue("SERVICE_NAME", "catalog_service_go"))
+	config.ServiceName = cast.ToString(getOrReturnDefaultValue("SERVICE_NAME", "crm_user_service_go"))
 	config.Environment = cast.ToString(getOrReturnDefaultValue("ENVIRONMENT", DebugMode))
 	config.Version = cast.ToString(getOrReturnDefaultValue("VERSION", "1.0"))
 
@@ -53,11 +53,11 @@ func Load() Config {
 	config.PostgresPort = cast.ToInt(getOrReturnDefaultValue("POSTGRES_PORT", 5432))
 	config.PostgresUser = cast.ToString(getOrReturnDefaultValue("POSTGRES_USER", "mirodil"))
 	config.PostgresPassword = cast.ToString(getOrReturnDefaultValue("POSTGRES_PASSWORD", "1212"))
-	config.PostgresDatabase = cast.ToString(getOrReturnDefaultValue("POSTGRES_DATABASE", "catalog_service"))
+	config.PostgresDatabase = cast.ToString(getOrReturnDefaultValue("POSTGRES_DATABASE", "crm_user_service"))
 	config.PostgresMaxConnections = cast.ToInt32(getOrReturnDefaultValue("POSTGRES_MAX_CONNECTIONS", 30))
-	config.RedisHost = "localhost" //cast.ToString(getOrReturnDefault("REDIS_HOST", "localhost"))
-	config.RedisPort = "6379"      //cast.ToString(getOrReturnDefault("REDIS_PORT", "6379"))
-	config.RedisPassword = cast.ToString(getOrReturnDefault("REDIS_PASSWORD", "password"))
+	// config.RedisHost = "localhost" //cast.ToString(getOrReturnDefault("REDIS_HOST", "localhost"))
+	// config.RedisPort = "6379"      //cast.ToString(getOrReturnDefault("REDIS_PORT", "6379"))
+	// config.RedisPassword = cast.ToString(getOrReturnDefaultValue("REDIS_PASSWORD", "password"))
 
 	config.ContentServiceHost = cast.ToString(getOrReturnDefaultValue("catalog_service_HOST", "localhost"))
 	config.ContentGRPCPort = cast.ToString(getOrReturnDefaultValue("CONTENT_GRPC_PORT", ":8081"))

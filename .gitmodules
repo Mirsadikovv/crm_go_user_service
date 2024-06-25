@@ -1,0 +1,3 @@
+[submodule "crm_proto"]
+	path = crm_proto
+	url = https://github.com/Mirsadikovv/crm_proto.git
