@@ -67,11 +67,11 @@ func (c *eventRepo) Update(ctx context.Context, req *br.UpdateEvent) (*br.GetEve
 		updated_at = NOW()
 		WHERE id = $5
 		`,
-		req.Id,
 		req.BranchId,
 		req.Topic,
 		req.StartTime,
 		req.EndTime,
+		req.Id,
 	)
 	if err != nil {
 		log.Println("error while updating event")
@@ -126,8 +126,6 @@ func (c *eventRepo) GetAll(ctx context.Context, req *br.GetListEventRequest) (*b
 			&event.Id,
 			&event.BranchId,
 			&event.Topic,
-			&event.StartTime,
-			&event.EndTime,
 			&start_time,
 			&end_time,
 			&created_at,
@@ -177,8 +175,6 @@ func (c *eventRepo) GetById(ctx context.Context, id *br.EventPrimaryKey) (*br.Ge
 		&event.Id,
 		&event.BranchId,
 		&event.Topic,
-		&event.StartTime,
-		&event.EndTime,
 		&start_time,
 		&end_time,
 		&created_at,

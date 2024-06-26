@@ -2,11 +2,15 @@ package storage
 
 import (
 	"context"
+	"go_user_service/genproto/administrator_service"
 	"go_user_service/genproto/branch_service"
 	"go_user_service/genproto/event_registrate_service"
 	"go_user_service/genproto/event_service"
 	"go_user_service/genproto/group_service"
+	"go_user_service/genproto/manager_service"
 	"go_user_service/genproto/student_service"
+	"go_user_service/genproto/superadmin_service"
+	"go_user_service/genproto/support_teacher_service"
 	"go_user_service/genproto/teacher_service"
 
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -15,6 +19,10 @@ import (
 type StorageI interface {
 	CloseDB()
 	Teacher() TeacherRepoI
+	SupportTeacher() SupportTeacherRepoI
+	Manager() ManagerRepoI
+	Administrator() AdministratorRepoI
+	Superadmin() SuperadminRepoI
 	Branch() BranchRepoI
 	Group() GroupRepoI
 	Student() StudentRepoI
@@ -30,12 +38,43 @@ type TeacherRepoI interface {
 	Delete(context.Context, *teacher_service.TeacherPrimaryKey) (emptypb.Empty, error)
 }
 
+type SupportTeacherRepoI interface {
+	Create(context.Context, *support_teacher_service.CreateSupportTeacher) (*support_teacher_service.GetSupportTeacher, error)
+	Update(context.Context, *support_teacher_service.UpdateSupportTeacher) (*support_teacher_service.GetSupportTeacher, error)
+	GetAll(context.Context, *support_teacher_service.GetListSupportTeacherRequest) (*support_teacher_service.GetListSupportTeacherResponse, error)
+	GetById(context.Context, *support_teacher_service.SupportTeacherPrimaryKey) (*support_teacher_service.GetSupportTeacher, error)
+	Delete(context.Context, *support_teacher_service.SupportTeacherPrimaryKey) (emptypb.Empty, error)
+}
+
 type BranchRepoI interface {
 	Create(context.Context, *branch_service.CreateBranch) (*branch_service.GetBranch, error)
 	Update(context.Context, *branch_service.UpdateBranch) (*branch_service.GetBranch, error)
 	GetAll(context.Context, *branch_service.GetListBranchRequest) (*branch_service.GetListBranchResponse, error)
 	GetById(context.Context, *branch_service.BranchPrimaryKey) (*branch_service.GetBranch, error)
 	Delete(context.Context, *branch_service.BranchPrimaryKey) (emptypb.Empty, error)
+}
+
+type ManagerRepoI interface {
+	Create(context.Context, *manager_service.CreateManager) (*manager_service.GetManager, error)
+	Update(context.Context, *manager_service.UpdateManager) (*manager_service.GetManager, error)
+	GetAll(context.Context, *manager_service.GetListManagerRequest) (*manager_service.GetListManagerResponse, error)
+	GetById(context.Context, *manager_service.ManagerPrimaryKey) (*manager_service.GetManager, error)
+	Delete(context.Context, *manager_service.ManagerPrimaryKey) (emptypb.Empty, error)
+}
+
+type AdministratorRepoI interface {
+	Create(context.Context, *administrator_service.CreateAdministrator) (*administrator_service.GetAdministrator, error)
+	Update(context.Context, *administrator_service.UpdateAdministrator) (*administrator_service.GetAdministrator, error)
+	GetAll(context.Context, *administrator_service.GetListAdministratorRequest) (*administrator_service.GetListAdministratorResponse, error)
+	GetById(context.Context, *administrator_service.AdministratorPrimaryKey) (*administrator_service.GetAdministrator, error)
+	Delete(context.Context, *administrator_service.AdministratorPrimaryKey) (emptypb.Empty, error)
+}
+
+type SuperadminRepoI interface {
+	Create(context.Context, *superadmin_service.CreateSuperadmin) (*superadmin_service.GetSuperadmin, error)
+	Update(context.Context, *superadmin_service.UpdateSuperadmin) (*superadmin_service.GetSuperadmin, error)
+	GetById(context.Context, *superadmin_service.SuperadminPrimaryKey) (*superadmin_service.GetSuperadmin, error)
+	Delete(context.Context, *superadmin_service.SuperadminPrimaryKey) (emptypb.Empty, error)
 }
 
 type GroupRepoI interface {

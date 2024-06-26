@@ -14,6 +14,10 @@ import (
 type Store struct {
 	db              *pgxpool.Pool
 	teacher         storage.TeacherRepoI
+	support_teacher storage.SupportTeacherRepoI
+	manager         storage.ManagerRepoI
+	superadmin      storage.SuperadminRepoI
+	administrator   storage.AdministratorRepoI
 	branch          storage.BranchRepoI
 	group           storage.GroupRepoI
 	student         storage.StudentRepoI
@@ -64,6 +68,34 @@ func (s *Store) Teacher() storage.TeacherRepoI {
 		s.teacher = NewTeacherRepo(s.db)
 	}
 	return s.teacher
+}
+
+func (s *Store) SupportTeacher() storage.SupportTeacherRepoI {
+	if s.support_teacher == nil {
+		s.support_teacher = NewSupportTeacherRepo(s.db)
+	}
+	return s.support_teacher
+}
+
+func (s *Store) Manager() storage.ManagerRepoI {
+	if s.manager == nil {
+		s.manager = NewManagerRepo(s.db)
+	}
+	return s.manager
+}
+
+func (s *Store) Administrator() storage.AdministratorRepoI {
+	if s.administrator == nil {
+		s.administrator = NewAdministratorRepo(s.db)
+	}
+	return s.administrator
+}
+
+func (s *Store) Superadmin() storage.SuperadminRepoI {
+	if s.superadmin == nil {
+		s.superadmin = NewSuperadminRepo(s.db)
+	}
+	return s.superadmin
 }
 
 func (s *Store) Branch() storage.BranchRepoI {

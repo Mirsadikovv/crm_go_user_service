@@ -70,12 +70,12 @@ func (c *branchRepo) Update(ctx context.Context, req *br.UpdateBranch) (*br.GetB
 		updated_at = NOW()
 		WHERE id = $6
 		`,
-		req.Id,
 		req.BranchName,
 		req.BranchLocation,
 		req.Phone,
 		req.OpenTime,
 		req.CloseTime,
+		req.Id,
 	)
 	if err != nil {
 		log.Println("error while updating branch")

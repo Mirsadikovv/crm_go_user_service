@@ -25,7 +25,6 @@ const _ = grpc.SupportPackageIsVersion7
 type SuperadminServiceClient interface {
 	Create(ctx context.Context, in *CreateSuperadmin, opts ...grpc.CallOption) (*GetSuperadmin, error)
 	GetByID(ctx context.Context, in *SuperadminPrimaryKey, opts ...grpc.CallOption) (*GetSuperadmin, error)
-	GetList(ctx context.Context, in *GetListSuperadminRequest, opts ...grpc.CallOption) (*GetListSuperadminResponse, error)
 	Update(ctx context.Context, in *UpdateSuperadmin, opts ...grpc.CallOption) (*GetSuperadmin, error)
 	Delete(ctx context.Context, in *SuperadminPrimaryKey, opts ...grpc.CallOption) (*empty.Empty, error)
 }
@@ -56,15 +55,6 @@ func (c *superadminServiceClient) GetByID(ctx context.Context, in *SuperadminPri
 	return out, nil
 }
 
-func (c *superadminServiceClient) GetList(ctx context.Context, in *GetListSuperadminRequest, opts ...grpc.CallOption) (*GetListSuperadminResponse, error) {
-	out := new(GetListSuperadminResponse)
-	err := c.cc.Invoke(ctx, "/superadmin_service_go.SuperadminService/GetList", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *superadminServiceClient) Update(ctx context.Context, in *UpdateSuperadmin, opts ...grpc.CallOption) (*GetSuperadmin, error) {
 	out := new(GetSuperadmin)
 	err := c.cc.Invoke(ctx, "/superadmin_service_go.SuperadminService/Update", in, out, opts...)
@@ -89,7 +79,6 @@ func (c *superadminServiceClient) Delete(ctx context.Context, in *SuperadminPrim
 type SuperadminServiceServer interface {
 	Create(context.Context, *CreateSuperadmin) (*GetSuperadmin, error)
 	GetByID(context.Context, *SuperadminPrimaryKey) (*GetSuperadmin, error)
-	GetList(context.Context, *GetListSuperadminRequest) (*GetListSuperadminResponse, error)
 	Update(context.Context, *UpdateSuperadmin) (*GetSuperadmin, error)
 	Delete(context.Context, *SuperadminPrimaryKey) (*empty.Empty, error)
 }
@@ -103,9 +92,6 @@ func (UnimplementedSuperadminServiceServer) Create(context.Context, *CreateSuper
 }
 func (UnimplementedSuperadminServiceServer) GetByID(context.Context, *SuperadminPrimaryKey) (*GetSuperadmin, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetByID not implemented")
-}
-func (UnimplementedSuperadminServiceServer) GetList(context.Context, *GetListSuperadminRequest) (*GetListSuperadminResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetList not implemented")
 }
 func (UnimplementedSuperadminServiceServer) Update(context.Context, *UpdateSuperadmin) (*GetSuperadmin, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
@@ -161,24 +147,6 @@ func _SuperadminService_GetByID_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SuperadminService_GetList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetListSuperadminRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SuperadminServiceServer).GetList(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/superadmin_service_go.SuperadminService/GetList",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SuperadminServiceServer).GetList(ctx, req.(*GetListSuperadminRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _SuperadminService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateSuperadmin)
 	if err := dec(in); err != nil {
@@ -229,10 +197,6 @@ var SuperadminService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetByID",
 			Handler:    _SuperadminService_GetByID_Handler,
-		},
-		{
-			MethodName: "GetList",
-			Handler:    _SuperadminService_GetList_Handler,
 		},
 		{
 			MethodName: "Update",

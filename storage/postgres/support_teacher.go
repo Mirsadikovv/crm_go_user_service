@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	tc "go_user_service/genproto/teacher_service"
+	stc "go_user_service/genproto/support_teacher_service"
 	"go_user_service/pkg"
 	"go_user_service/pkg/hash"
 	"go_user_service/storage"
@@ -16,27 +16,27 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
-type teacherRepo struct {
+type support_teacherRepo struct {
 	db *pgxpool.Pool
 }
 
-func NewTeacherRepo(db *pgxpool.Pool) storage.TeacherRepoI {
-	return &teacherRepo{
+func NewSupportTeacherRepo(db *pgxpool.Pool) storage.SupportTeacherRepoI {
+	return &support_teacherRepo{
 		db: db,
 	}
 }
 
-func generateTeacherLogin(db *pgxpool.Pool, ctx context.Context) (string, error) {
+func generateSupportTeacherLogin(db *pgxpool.Pool, ctx context.Context) (string, error) {
 	var nextVal int
-	err := db.QueryRow(ctx, "SELECT nextval('teacher_external_id_seq')").Scan(&nextVal)
+	err := db.QueryRow(ctx, "SELECT nextval('support_teacher_external_id_seq')").Scan(&nextVal)
 	if err != nil {
 		return "", err
 	}
-	userLogin := "T" + fmt.Sprintf("%05d", nextVal)
+	userLogin := "ST" + fmt.Sprintf("%05d", nextVal)
 	return userLogin, nil
 }
 
-func (c *teacherRepo) Create(ctx context.Context, req *tc.CreateTeacher) (*tc.GetTeacher, error) {
+func (c *support_teacherRepo) Create(ctx context.Context, req *stc.CreateSupportTeacher) (*stc.GetSupportTeacher, error) {
 	var end_working sql.NullString
 	if req.EndWorking == "" {
 		end_working = sql.NullString{Valid: false}
@@ -49,12 +49,12 @@ func (c *teacherRepo) Create(ctx context.Context, req *tc.CreateTeacher) (*tc.Ge
 		log.Println("error while hashing password", err)
 	}
 
-	userLogin, err := generateTeacherLogin(c.db, ctx)
+	userLogin, err := generateSupportTeacherLogin(c.db, ctx)
 	if err != nil {
 		log.Println("error while generating login", err)
 	}
 	comtag, err := c.db.Exec(ctx, `
-		INSERT INTO teachers (
+		INSERT INTO support_teachers (
 			id,
 			branch_id,
 			user_login,
@@ -86,19 +86,19 @@ func (c *teacherRepo) Create(ctx context.Context, req *tc.CreateTeacher) (*tc.Ge
 		req.StartWorking,
 		end_working)
 	if err != nil {
-		log.Println("error while creating teacher", comtag)
+		log.Println("error while creating support_teacher", comtag)
 		return nil, err
 	}
 
-	teacher, err := c.GetById(ctx, &tc.TeacherPrimaryKey{Id: id})
+	support_teacher, err := c.GetById(ctx, &stc.SupportTeacherPrimaryKey{Id: id})
 	if err != nil {
-		log.Println("error while getting teacher by id")
+		log.Println("error while getting support_teacher by id")
 		return nil, err
 	}
-	return teacher, nil
+	return support_teacher, nil
 }
 
-func (c *teacherRepo) Update(ctx context.Context, req *tc.UpdateTeacher) (*tc.GetTeacher, error) {
+func (c *support_teacherRepo) Update(ctx context.Context, req *stc.UpdateSupportTeacher) (*stc.GetSupportTeacher, error) {
 	var end_working sql.NullString
 	if req.EndWorking == "" {
 		end_working = sql.NullString{Valid: false}
@@ -106,7 +106,7 @@ func (c *teacherRepo) Update(ctx context.Context, req *tc.UpdateTeacher) (*tc.Ge
 		end_working = sql.NullString{String: req.EndWorking, Valid: true}
 	}
 	_, err := c.db.Exec(ctx, `
-		UPDATE teachers SET
+		UPDATE support_teachers SET
 		branch_id = $1,
 		birthday = $2,
 		gender = $3,
@@ -134,20 +134,20 @@ func (c *teacherRepo) Update(ctx context.Context, req *tc.UpdateTeacher) (*tc.Ge
 		end_working,
 		req.Id)
 	if err != nil {
-		log.Println("error while updating teacher")
+		log.Println("error while updating support_teacher")
 		return nil, err
 	}
 
-	teacher, err := c.GetById(ctx, &tc.TeacherPrimaryKey{Id: req.Id})
+	support_teacher, err := c.GetById(ctx, &stc.SupportTeacherPrimaryKey{Id: req.Id})
 	if err != nil {
-		log.Println("error while getting teacher by id")
+		log.Println("error while getting support_teacher by id")
 		return nil, err
 	}
-	return teacher, nil
+	return support_teacher, nil
 }
 
-func (c *teacherRepo) GetAll(ctx context.Context, req *tc.GetListTeacherRequest) (*tc.GetListTeacherResponse, error) {
-	teachers := tc.GetListTeacherResponse{}
+func (c *support_teacherRepo) GetAll(ctx context.Context, req *stc.GetListSupportTeacherRequest) (*stc.GetListSupportTeacherResponse, error) {
+	support_teachers := stc.GetListSupportTeacherResponse{}
 	var (
 		created_at    sql.NullString
 		updated_at    sql.NullString
@@ -175,69 +175,68 @@ func (c *teacherRepo) GetAll(ctx context.Context, req *tc.GetListTeacherRequest)
 				end_working,
 				created_at,
 				updated_at
-			FROM teachers
+			FROM support_teachers
 			WHERE TRUE AND deleted_at is null ` + filter_by_name + `
 			OFFSET $1 LIMIT $2
 `
 	rows, err := c.db.Query(ctx, query, offest, req.Limit)
 
 	if err != nil {
-		log.Println("error while getting all teachers")
+		log.Println("error while getting all support_teachers")
 		return nil, err
 	}
 	defer rows.Close()
 	for rows.Next() {
 		var (
-			teacher tc.GetTeacher
+			support_teacher stc.GetSupportTeacher
 		)
 		if err = rows.Scan(
-			&teacher.Id,
-			&teacher.BranchId,
-			&teacher.UserLogin,
-			&teacher.Birthday,
-			&teacher.Gender,
-			&teacher.Fullname,
-			&teacher.Email,
-			&teacher.Phone,
-			&teacher.Salary,
-			&teacher.IeltsScore,
-			&teacher.IeltsAttemptsCount,
+			&support_teacher.Id,
+			&support_teacher.BranchId,
+			&support_teacher.UserLogin,
+			&support_teacher.Birthday,
+			&support_teacher.Gender,
+			&support_teacher.Fullname,
+			&support_teacher.Email,
+			&support_teacher.Phone,
+			&support_teacher.Salary,
+			&support_teacher.IeltsScore,
+			&support_teacher.IeltsAttemptsCount,
 			&start_working,
 			&end_working,
 			&created_at,
 			&updated_at,
 		); err != nil {
-			return &teachers, err
+			return &support_teachers, err
 		}
-		teacher.StartWorking = pkg.NullStringToString(start_working)
-		teacher.EndWorking = pkg.NullStringToString(end_working)
-		teacher.CreatedAt = pkg.NullStringToString(created_at)
-		teacher.UpdatedAt = pkg.NullStringToString(updated_at)
+		support_teacher.StartWorking = pkg.NullStringToString(start_working)
+		support_teacher.EndWorking = pkg.NullStringToString(end_working)
+		support_teacher.CreatedAt = pkg.NullStringToString(created_at)
+		support_teacher.UpdatedAt = pkg.NullStringToString(updated_at)
 
-		teachers.Teachers = append(teachers.Teachers, &teacher)
+		support_teachers.SupportTeachers = append(support_teachers.SupportTeachers, &support_teacher)
 	}
 
-	err = c.db.QueryRow(ctx, `SELECT count(*) from teachers WHERE TRUE AND deleted_at is null `+filter_by_name+``).Scan(&teachers.Count)
+	err = c.db.QueryRow(ctx, `SELECT count(*) from support_teachers WHERE TRUE AND deleted_at is null `+filter_by_name+``).Scan(&support_teachers.Count)
 	if err != nil {
-		return &teachers, err
+		return &support_teachers, err
 	}
 
-	return &teachers, nil
+	return &support_teachers, nil
 }
 
-func (c *teacherRepo) GetById(ctx context.Context, id *tc.TeacherPrimaryKey) (*tc.GetTeacher, error) {
+func (c *support_teacherRepo) GetById(ctx context.Context, id *stc.SupportTeacherPrimaryKey) (*stc.GetSupportTeacher, error) {
 	var (
-		teacher       tc.GetTeacher
-		created_at    sql.NullString
-		updated_at    sql.NullString
-		start_working sql.NullString
-		end_working   sql.NullString
+		support_teacher stc.GetSupportTeacher
+		created_at      sql.NullString
+		updated_at      sql.NullString
+		start_working   sql.NullString
+		end_working     sql.NullString
 	)
 
 	query := `SELECT
 				id,
 				branch_id,
-				user_login,
 				birthday,
 				gender,
 				fullname,
@@ -250,41 +249,40 @@ func (c *teacherRepo) GetById(ctx context.Context, id *tc.TeacherPrimaryKey) (*t
 				end_working,
 				created_at,
 				updated_at
-			FROM teachers
+			FROM support_teachers
 			WHERE id = $1 AND deleted_at IS NULL`
 
 	rows := c.db.QueryRow(ctx, query, id.Id)
 
 	if err := rows.Scan(
-		&teacher.Id,
-		&teacher.BranchId,
-		&teacher.UserLogin,
-		&teacher.Birthday,
-		&teacher.Gender,
-		&teacher.Fullname,
-		&teacher.Email,
-		&teacher.Phone,
-		&teacher.Salary,
-		&teacher.IeltsScore,
-		&teacher.IeltsAttemptsCount,
+		&support_teacher.Id,
+		&support_teacher.BranchId,
+		&support_teacher.Birthday,
+		&support_teacher.Gender,
+		&support_teacher.Fullname,
+		&support_teacher.Email,
+		&support_teacher.Phone,
+		&support_teacher.Salary,
+		&support_teacher.IeltsScore,
+		&support_teacher.IeltsAttemptsCount,
 		&start_working,
 		&end_working,
 		&created_at,
 		&updated_at); err != nil {
-		return &teacher, err
+		return &support_teacher, err
 	}
-	teacher.StartWorking = pkg.NullStringToString(start_working)
-	teacher.EndWorking = pkg.NullStringToString(end_working)
-	teacher.CreatedAt = pkg.NullStringToString(created_at)
-	teacher.UpdatedAt = pkg.NullStringToString(updated_at)
+	support_teacher.StartWorking = pkg.NullStringToString(start_working)
+	support_teacher.EndWorking = pkg.NullStringToString(end_working)
+	support_teacher.CreatedAt = pkg.NullStringToString(created_at)
+	support_teacher.UpdatedAt = pkg.NullStringToString(updated_at)
 
-	return &teacher, nil
+	return &support_teacher, nil
 }
 
-func (c *teacherRepo) Delete(ctx context.Context, id *tc.TeacherPrimaryKey) (emptypb.Empty, error) {
+func (c *support_teacherRepo) Delete(ctx context.Context, id *stc.SupportTeacherPrimaryKey) (emptypb.Empty, error) {
 
 	_, err := c.db.Exec(ctx, `
-		UPDATE teachers SET
+		UPDATE support_teachers SET
 		deleted_at = NOW()
 		WHERE id = $1
 		`,

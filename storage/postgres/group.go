@@ -35,15 +35,17 @@ func (c *groupRepo) Create(ctx context.Context, req *br.CreateGroup) (*br.GetGro
 			teacher_id,
 			support_teacher_id,
 			group_name,
+			group_level,
 			started_at,
 			finished_at
-		) VALUES ($1,$2,$3,$4,$5,$6,$7
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8
 		)`,
 		id,
 		req.BranchId,
 		req.TeacherId,
 		req.SupportTeacherId,
 		req.GroupName,
+		req.GroupLevel,
 		req.StartedAt,
 		req.FinishedAt,
 	)
@@ -68,18 +70,20 @@ func (c *groupRepo) Update(ctx context.Context, req *br.UpdateGroup) (*br.GetGro
 		teacher_id = $2,
 		support_teacher_id = $3,
 		group_name = $4,
-		started_at = $5,
-		finished_at = $6,
+		group_level = $5,
+		started_at = $6,
+		finished_at = $7,
 		updated_at = NOW()
-		WHERE id = $7
+		WHERE id = $8
 		`,
-		req.Id,
 		req.BranchId,
 		req.TeacherId,
 		req.SupportTeacherId,
 		req.GroupName,
+		req.GroupLevel,
 		req.StartedAt,
 		req.FinishedAt,
+		req.Id,
 	)
 	if err != nil {
 		log.Println("error while updating group")
@@ -113,6 +117,7 @@ func (c *groupRepo) GetAll(ctx context.Context, req *br.GetListGroupRequest) (*b
 				teacher_id,
 				support_teacher_id,
 				group_name,
+				group_level,
 				started_at,
 				finished_at,
 				created_at,
@@ -138,6 +143,7 @@ func (c *groupRepo) GetAll(ctx context.Context, req *br.GetListGroupRequest) (*b
 			&group.TeacherId,
 			&group.SupportTeacherId,
 			&group.GroupName,
+			&group.GroupLevel,
 			&started_at,
 			&finished_at,
 			&created_at,
@@ -176,6 +182,7 @@ func (c *groupRepo) GetById(ctx context.Context, id *br.GroupPrimaryKey) (*br.Ge
 				teacher_id,
 				support_teacher_id,
 				group_name,
+				group_level,
 				started_at,
 				finished_at,
 				created_at,
@@ -191,6 +198,7 @@ func (c *groupRepo) GetById(ctx context.Context, id *br.GroupPrimaryKey) (*br.Ge
 		&group.TeacherId,
 		&group.SupportTeacherId,
 		&group.GroupName,
+		&group.GroupLevel,
 		&started_at,
 		&finished_at,
 		&created_at,

@@ -2,9 +2,7 @@ package postgres
 
 import (
 	"context"
-	"database/sql"
 	br "go_user_service/genproto/event_registrate_service"
-	"go_user_service/pkg"
 	"go_user_service/storage"
 	"log"
 
@@ -60,9 +58,9 @@ func (c *eventRegistrateRepo) Update(ctx context.Context, req *br.UpdateEventReg
 		updated_at = NOW()
 		WHERE id = $3
 		`,
-		req.Id,
 		req.EventId,
 		req.StudentId,
+		req.Id,
 	)
 	if err != nil {
 		log.Println("error while updating event_registrate")
@@ -80,8 +78,6 @@ func (c *eventRegistrateRepo) Update(ctx context.Context, req *br.UpdateEventReg
 func (c *eventRegistrateRepo) GetById(ctx context.Context, id *br.EventRegistratePrimaryKey) (*br.GetEventRegistrate, error) {
 	var (
 		event_registrate br.GetEventRegistrate
-		created_at       sql.NullString
-		updated_at       sql.NullString
 	)
 
 	query := `SELECT
@@ -99,13 +95,9 @@ func (c *eventRegistrateRepo) GetById(ctx context.Context, id *br.EventRegistrat
 		&event_registrate.Id,
 		&event_registrate.EventId,
 		&event_registrate.StudentId,
-		&created_at,
-		&updated_at); err != nil {
+	); err != nil {
 		return &event_registrate, err
 	}
-
-	event_registrate.CreatedAt = pkg.NullStringToString(created_at)
-	event_registrate.UpdatedAt = pkg.NullStringToString(updated_at)
 
 	return &event_registrate, nil
 }
