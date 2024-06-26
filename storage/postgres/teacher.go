@@ -26,13 +26,13 @@ func NewTeacherRepo(db *pgxpool.Pool) storage.TeacherRepoI {
 	}
 }
 
-func generateLogin(db *pgxpool.Pool, ctx context.Context) (string, error) {
+func generateTeacherLogin(db *pgxpool.Pool, ctx context.Context) (string, error) {
 	var nextVal int
 	err := db.QueryRow(ctx, "SELECT nextval('teacher_external_id_seq')").Scan(&nextVal)
 	if err != nil {
 		return "", err
 	}
-	userLogin := "" + fmt.Sprintf("%06d", nextVal)
+	userLogin := "T" + fmt.Sprintf("%05d", nextVal)
 	return userLogin, nil
 }
 
@@ -44,7 +44,7 @@ func (c *teacherRepo) Create(ctx context.Context, req *tc.CreateTeacher) (*tc.Ge
 		log.Println("error while hashing password", err)
 	}
 
-	userLogin, err := generateLogin(c.db, ctx)
+	userLogin, err := generateTeacherLogin(c.db, ctx)
 	if err != nil {
 		log.Println("error while generating login", err)
 	}
@@ -158,7 +158,6 @@ func (c *teacherRepo) GetAll(ctx context.Context, req *tc.GetListTeacherRequest)
 				fullname,
 				email,
 				phone,
-				user_password,
 				salary,
 				ielts_score,
 				ielts_attempts_count,
@@ -190,7 +189,6 @@ func (c *teacherRepo) GetAll(ctx context.Context, req *tc.GetListTeacherRequest)
 			&teacher.Fullname,
 			&teacher.Email,
 			&teacher.Phone,
-			&teacher.UserPassword,
 			&teacher.Salary,
 			&teacher.IeltsScore,
 			&teacher.IeltsAttemptsCount,
@@ -209,7 +207,7 @@ func (c *teacherRepo) GetAll(ctx context.Context, req *tc.GetListTeacherRequest)
 		teachers.Teachers = append(teachers.Teachers, &teacher)
 	}
 
-	err = c.db.QueryRow(ctx, `SELECT count(*) from teacher WHERE TRUE AND deleted_at is null `+filter_by_name+``).Scan(&teachers.Count)
+	err = c.db.QueryRow(ctx, `SELECT count(*) from teachers WHERE TRUE AND deleted_at is null `+filter_by_name+``).Scan(&teachers.Count)
 	if err != nil {
 		return &teachers, err
 	}
@@ -229,13 +227,11 @@ func (c *teacherRepo) GetById(ctx context.Context, id *tc.TeacherPrimaryKey) (*t
 	query := `SELECT
 				id,
 				branch_id,
-				user_login,
 				birthday,
 				gender,
 				fullname,
 				email,
 				phone,
-				user_password,
 				salary,
 				ielts_score,
 				ielts_attempts_count,
@@ -251,13 +247,11 @@ func (c *teacherRepo) GetById(ctx context.Context, id *tc.TeacherPrimaryKey) (*t
 	if err := rows.Scan(
 		&teacher.Id,
 		&teacher.BranchId,
-		&teacher.UserLogin,
 		&teacher.Birthday,
 		&teacher.Gender,
 		&teacher.Fullname,
 		&teacher.Email,
 		&teacher.Phone,
-		&teacher.UserPassword,
 		&teacher.Salary,
 		&teacher.IeltsScore,
 		&teacher.IeltsAttemptsCount,
@@ -267,8 +261,8 @@ func (c *teacherRepo) GetById(ctx context.Context, id *tc.TeacherPrimaryKey) (*t
 		&updated_at); err != nil {
 		return &teacher, err
 	}
-	teacher.CreatedAt = pkg.NullStringToString(created_at)
-	teacher.UpdatedAt = pkg.NullStringToString(updated_at)
+	teacher.StartWorking = pkg.NullStringToString(start_working)
+	teacher.EndWorking = pkg.NullStringToString(end_working)
 	teacher.CreatedAt = pkg.NullStringToString(created_at)
 	teacher.UpdatedAt = pkg.NullStringToString(updated_at)
 

@@ -2,6 +2,10 @@ package grpc
 
 import (
 	"go_user_service/config"
+	"go_user_service/genproto/branch_service"
+	"go_user_service/genproto/event_service"
+	"go_user_service/genproto/group_service"
+	"go_user_service/genproto/student_service"
 	"go_user_service/genproto/teacher_service"
 
 	"go_user_service/grpc/client"
@@ -18,9 +22,10 @@ func SetUpServer(cfg config.Config, log logger.LoggerI, strg storage.StorageI, s
 	grpcServer = grpc.NewServer()
 
 	teacher_service.RegisterTeacherServiceServer(grpcServer, service.NewTeacherService(cfg, log, strg, srvc))
-	// product_service.RegisterProductServiceServer(grpcServer, service.NewProductService(cfg, log, strg, srvc))
-	// review_service.RegisterReviewServiceServer(grpcServer, service.NewReviewService(cfg, log, strg, srvc))
-	// product_categories_service.RegisterProductCategoriesServiceServer(grpcServer, service.NewProductCategoriesService(cfg, log, strg, srvc))
+	branch_service.RegisterBranchServiceServer(grpcServer, service.NewBranchService(cfg, log, strg, srvc))
+	group_service.RegisterGroupServiceServer(grpcServer, service.NewGroupService(cfg, log, strg, srvc))
+	student_service.RegisterStudentServiceServer(grpcServer, service.NewStudentService(cfg, log, strg, srvc))
+	event_service.RegisterEventServiceServer(grpcServer, service.NewEventService(cfg, log, strg, srvc))
 
 	reflection.Register(grpcServer)
 	return

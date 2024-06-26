@@ -12,8 +12,13 @@ import (
 )
 
 type Store struct {
-	db      *pgxpool.Pool
-	teacher storage.TeacherRepoI
+	db              *pgxpool.Pool
+	teacher         storage.TeacherRepoI
+	branch          storage.BranchRepoI
+	group           storage.GroupRepoI
+	student         storage.StudentRepoI
+	event           storage.EventRepoI
+	eventRegistrate storage.EventRegistrateRepoI
 }
 
 func NewPostgres(ctx context.Context, cfg config.Config) (storage.StorageI, error) {
@@ -58,6 +63,40 @@ func (s *Store) Teacher() storage.TeacherRepoI {
 	if s.teacher == nil {
 		s.teacher = NewTeacherRepo(s.db)
 	}
-
 	return s.teacher
+}
+
+func (s *Store) Branch() storage.BranchRepoI {
+	if s.branch == nil {
+		s.branch = NewBranchRepo(s.db)
+	}
+	return s.branch
+}
+
+func (s *Store) Group() storage.GroupRepoI {
+	if s.group == nil {
+		s.group = NewGroupRepo(s.db)
+	}
+	return s.group
+}
+
+func (s *Store) Student() storage.StudentRepoI {
+	if s.student == nil {
+		s.student = NewStudentRepo(s.db)
+	}
+	return s.student
+}
+
+func (s *Store) Event() storage.EventRepoI {
+	if s.event == nil {
+		s.event = NewEventRepo(s.db)
+	}
+	return s.event
+}
+
+func (s *Store) EventRegistrate() storage.EventRegistrateRepoI {
+	if s.eventRegistrate == nil {
+		s.eventRegistrate = NewEventRegistrateRepo(s.db)
+	}
+	return s.eventRegistrate
 }

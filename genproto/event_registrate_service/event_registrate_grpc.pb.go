@@ -25,7 +25,6 @@ const _ = grpc.SupportPackageIsVersion7
 type EventRegistrateServiceClient interface {
 	Create(ctx context.Context, in *CreateEventRegistrate, opts ...grpc.CallOption) (*GetEventRegistrate, error)
 	GetByID(ctx context.Context, in *EventRegistratePrimaryKey, opts ...grpc.CallOption) (*GetEventRegistrate, error)
-	GetList(ctx context.Context, in *GetListEventRegistrateRequest, opts ...grpc.CallOption) (*GetListEventRegistrateResponse, error)
 	Update(ctx context.Context, in *UpdateEventRegistrate, opts ...grpc.CallOption) (*GetEventRegistrate, error)
 	Delete(ctx context.Context, in *EventRegistratePrimaryKey, opts ...grpc.CallOption) (*empty.Empty, error)
 }
@@ -56,15 +55,6 @@ func (c *eventRegistrateServiceClient) GetByID(ctx context.Context, in *EventReg
 	return out, nil
 }
 
-func (c *eventRegistrateServiceClient) GetList(ctx context.Context, in *GetListEventRegistrateRequest, opts ...grpc.CallOption) (*GetListEventRegistrateResponse, error) {
-	out := new(GetListEventRegistrateResponse)
-	err := c.cc.Invoke(ctx, "/event_registrate_service_go.EventRegistrateService/GetList", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *eventRegistrateServiceClient) Update(ctx context.Context, in *UpdateEventRegistrate, opts ...grpc.CallOption) (*GetEventRegistrate, error) {
 	out := new(GetEventRegistrate)
 	err := c.cc.Invoke(ctx, "/event_registrate_service_go.EventRegistrateService/Update", in, out, opts...)
@@ -89,7 +79,6 @@ func (c *eventRegistrateServiceClient) Delete(ctx context.Context, in *EventRegi
 type EventRegistrateServiceServer interface {
 	Create(context.Context, *CreateEventRegistrate) (*GetEventRegistrate, error)
 	GetByID(context.Context, *EventRegistratePrimaryKey) (*GetEventRegistrate, error)
-	GetList(context.Context, *GetListEventRegistrateRequest) (*GetListEventRegistrateResponse, error)
 	Update(context.Context, *UpdateEventRegistrate) (*GetEventRegistrate, error)
 	Delete(context.Context, *EventRegistratePrimaryKey) (*empty.Empty, error)
 }
@@ -103,9 +92,6 @@ func (UnimplementedEventRegistrateServiceServer) Create(context.Context, *Create
 }
 func (UnimplementedEventRegistrateServiceServer) GetByID(context.Context, *EventRegistratePrimaryKey) (*GetEventRegistrate, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetByID not implemented")
-}
-func (UnimplementedEventRegistrateServiceServer) GetList(context.Context, *GetListEventRegistrateRequest) (*GetListEventRegistrateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetList not implemented")
 }
 func (UnimplementedEventRegistrateServiceServer) Update(context.Context, *UpdateEventRegistrate) (*GetEventRegistrate, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
@@ -161,24 +147,6 @@ func _EventRegistrateService_GetByID_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EventRegistrateService_GetList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetListEventRegistrateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EventRegistrateServiceServer).GetList(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/event_registrate_service_go.EventRegistrateService/GetList",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EventRegistrateServiceServer).GetList(ctx, req.(*GetListEventRegistrateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _EventRegistrateService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateEventRegistrate)
 	if err := dec(in); err != nil {
@@ -229,10 +197,6 @@ var EventRegistrateService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetByID",
 			Handler:    _EventRegistrateService_GetByID_Handler,
-		},
-		{
-			MethodName: "GetList",
-			Handler:    _EventRegistrateService_GetList_Handler,
 		},
 		{
 			MethodName: "Update",
