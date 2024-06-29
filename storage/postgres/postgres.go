@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go_user_service/config"
 	"go_user_service/storage"
+	"go_user_service/storage/redis"
 	"log"
 
 	"github.com/jackc/pgx/v4"
@@ -13,6 +14,7 @@ import (
 
 type Store struct {
 	db              *pgxpool.Pool
+	cfg             config.Config
 	teacher         storage.TeacherRepoI
 	support_teacher storage.SupportTeacherRepoI
 	manager         storage.ManagerRepoI
@@ -23,9 +25,10 @@ type Store struct {
 	student         storage.StudentRepoI
 	event           storage.EventRepoI
 	eventRegistrate storage.EventRegistrateRepoI
+	redis           storage.IRedisStorage
 }
 
-func NewPostgres(ctx context.Context, cfg config.Config) (storage.StorageI, error) {
+func NewPostgres(ctx context.Context, cfg config.Config, redis storage.IRedisStorage) (storage.StorageI, error) {
 	config, err := pgxpool.ParseConfig(fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s?sslmode=disable",
 		cfg.PostgresUser,
@@ -46,7 +49,8 @@ func NewPostgres(ctx context.Context, cfg config.Config) (storage.StorageI, erro
 	}
 
 	return &Store{
-		db: pool,
+		db:    pool,
+		redis: redis,
 	}, err
 }
 
@@ -131,4 +135,8 @@ func (s *Store) EventRegistrate() storage.EventRegistrateRepoI {
 		s.eventRegistrate = NewEventRegistrateRepo(s.db)
 	}
 	return s.eventRegistrate
+}
+
+func (s Store) Redis() storage.IRedisStorage {
+	return redis.New(s.cfg)
 }

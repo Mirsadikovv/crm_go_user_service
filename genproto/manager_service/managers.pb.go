@@ -567,6 +567,456 @@ func (x *GetListManagerResponse) GetManagers() []*GetManager {
 	return nil
 }
 
+type ManagerLoginRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserLogin    string `protobuf:"bytes,1,opt,name=user_login,json=userLogin,proto3" json:"user_login,omitempty"`
+	UserPassword string `protobuf:"bytes,2,opt,name=user_password,json=userPassword,proto3" json:"user_password,omitempty"`
+}
+
+func (x *ManagerLoginRequest) Reset() {
+	*x = ManagerLoginRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_managers_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ManagerLoginRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ManagerLoginRequest) ProtoMessage() {}
+
+func (x *ManagerLoginRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_managers_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ManagerLoginRequest.ProtoReflect.Descriptor instead.
+func (*ManagerLoginRequest) Descriptor() ([]byte, []int) {
+	return file_managers_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ManagerLoginRequest) GetUserLogin() string {
+	if x != nil {
+		return x.UserLogin
+	}
+	return ""
+}
+
+func (x *ManagerLoginRequest) GetUserPassword() string {
+	if x != nil {
+		return x.UserPassword
+	}
+	return ""
+}
+
+type ManagerLoginResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	AccessToken  string `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken string `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+}
+
+func (x *ManagerLoginResponse) Reset() {
+	*x = ManagerLoginResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_managers_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ManagerLoginResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ManagerLoginResponse) ProtoMessage() {}
+
+func (x *ManagerLoginResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_managers_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ManagerLoginResponse.ProtoReflect.Descriptor instead.
+func (*ManagerLoginResponse) Descriptor() ([]byte, []int) {
+	return file_managers_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ManagerLoginResponse) GetAccessToken() string {
+	if x != nil {
+		return x.AccessToken
+	}
+	return ""
+}
+
+func (x *ManagerLoginResponse) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
+type ManagerRegisterRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Mail string `protobuf:"bytes,1,opt,name=mail,proto3" json:"mail,omitempty"`
+}
+
+func (x *ManagerRegisterRequest) Reset() {
+	*x = ManagerRegisterRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_managers_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ManagerRegisterRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ManagerRegisterRequest) ProtoMessage() {}
+
+func (x *ManagerRegisterRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_managers_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ManagerRegisterRequest.ProtoReflect.Descriptor instead.
+func (*ManagerRegisterRequest) Descriptor() ([]byte, []int) {
+	return file_managers_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ManagerRegisterRequest) GetMail() string {
+	if x != nil {
+		return x.Mail
+	}
+	return ""
+}
+
+type ManagerRegisterConfRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Mail    string           `protobuf:"bytes,1,opt,name=mail,proto3" json:"mail,omitempty"`
+	Otp     string           `protobuf:"bytes,2,opt,name=otp,proto3" json:"otp,omitempty"`
+	Manager []*CreateManager `protobuf:"bytes,3,rep,name=Manager,proto3" json:"Manager,omitempty"`
+}
+
+func (x *ManagerRegisterConfRequest) Reset() {
+	*x = ManagerRegisterConfRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_managers_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ManagerRegisterConfRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ManagerRegisterConfRequest) ProtoMessage() {}
+
+func (x *ManagerRegisterConfRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_managers_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ManagerRegisterConfRequest.ProtoReflect.Descriptor instead.
+func (*ManagerRegisterConfRequest) Descriptor() ([]byte, []int) {
+	return file_managers_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *ManagerRegisterConfRequest) GetMail() string {
+	if x != nil {
+		return x.Mail
+	}
+	return ""
+}
+
+func (x *ManagerRegisterConfRequest) GetOtp() string {
+	if x != nil {
+		return x.Otp
+	}
+	return ""
+}
+
+func (x *ManagerRegisterConfRequest) GetManager() []*CreateManager {
+	if x != nil {
+		return x.Manager
+	}
+	return nil
+}
+
+type ChangePassword struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserLogin   string `protobuf:"bytes,1,opt,name=UserLogin,proto3" json:"UserLogin,omitempty"`
+	OldPassword string `protobuf:"bytes,2,opt,name=OldPassword,proto3" json:"OldPassword,omitempty"`
+	NewPassword string `protobuf:"bytes,3,opt,name=NewPassword,proto3" json:"NewPassword,omitempty"`
+}
+
+func (x *ChangePassword) Reset() {
+	*x = ChangePassword{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_managers_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ChangePassword) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChangePassword) ProtoMessage() {}
+
+func (x *ChangePassword) ProtoReflect() protoreflect.Message {
+	mi := &file_managers_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChangePassword.ProtoReflect.Descriptor instead.
+func (*ChangePassword) Descriptor() ([]byte, []int) {
+	return file_managers_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ChangePassword) GetUserLogin() string {
+	if x != nil {
+		return x.UserLogin
+	}
+	return ""
+}
+
+func (x *ChangePassword) GetOldPassword() string {
+	if x != nil {
+		return x.OldPassword
+	}
+	return ""
+}
+
+func (x *ChangePassword) GetNewPassword() string {
+	if x != nil {
+		return x.NewPassword
+	}
+	return ""
+}
+
+type GetManagerByLogin struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	BranchId           string  `protobuf:"bytes,1,opt,name=branch_id,json=branchId,proto3" json:"branch_id,omitempty"`
+	UserLogin          string  `protobuf:"bytes,2,opt,name=user_login,json=userLogin,proto3" json:"user_login,omitempty"`
+	Birthday           string  `protobuf:"bytes,3,opt,name=birthday,proto3" json:"birthday,omitempty"`
+	Gender             string  `protobuf:"bytes,4,opt,name=gender,proto3" json:"gender,omitempty"`
+	Fullname           string  `protobuf:"bytes,5,opt,name=fullname,proto3" json:"fullname,omitempty"`
+	Email              string  `protobuf:"bytes,6,opt,name=email,proto3" json:"email,omitempty"`
+	Phone              string  `protobuf:"bytes,7,opt,name=phone,proto3" json:"phone,omitempty"`
+	Salary             float32 `protobuf:"fixed32,8,opt,name=salary,proto3" json:"salary,omitempty"`
+	IeltsScore         float32 `protobuf:"fixed32,9,opt,name=ielts_score,json=ieltsScore,proto3" json:"ielts_score,omitempty"`
+	IeltsAttemptsCount int32   `protobuf:"varint,10,opt,name=ielts_attempts_count,json=ieltsAttemptsCount,proto3" json:"ielts_attempts_count,omitempty"`
+	UserPassword       string  `protobuf:"bytes,11,opt,name=user_password,json=userPassword,proto3" json:"user_password,omitempty"`
+	StartWorking       string  `protobuf:"bytes,12,opt,name=start_working,json=startWorking,proto3" json:"start_working,omitempty"`
+	EndWorking         string  `protobuf:"bytes,13,opt,name=end_working,json=endWorking,proto3" json:"end_working,omitempty"`
+	CreatedAt          string  `protobuf:"bytes,14,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt          string  `protobuf:"bytes,15,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Id                 string  `protobuf:"bytes,16,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *GetManagerByLogin) Reset() {
+	*x = GetManagerByLogin{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_managers_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetManagerByLogin) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetManagerByLogin) ProtoMessage() {}
+
+func (x *GetManagerByLogin) ProtoReflect() protoreflect.Message {
+	mi := &file_managers_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetManagerByLogin.ProtoReflect.Descriptor instead.
+func (*GetManagerByLogin) Descriptor() ([]byte, []int) {
+	return file_managers_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *GetManagerByLogin) GetBranchId() string {
+	if x != nil {
+		return x.BranchId
+	}
+	return ""
+}
+
+func (x *GetManagerByLogin) GetUserLogin() string {
+	if x != nil {
+		return x.UserLogin
+	}
+	return ""
+}
+
+func (x *GetManagerByLogin) GetBirthday() string {
+	if x != nil {
+		return x.Birthday
+	}
+	return ""
+}
+
+func (x *GetManagerByLogin) GetGender() string {
+	if x != nil {
+		return x.Gender
+	}
+	return ""
+}
+
+func (x *GetManagerByLogin) GetFullname() string {
+	if x != nil {
+		return x.Fullname
+	}
+	return ""
+}
+
+func (x *GetManagerByLogin) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *GetManagerByLogin) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *GetManagerByLogin) GetSalary() float32 {
+	if x != nil {
+		return x.Salary
+	}
+	return 0
+}
+
+func (x *GetManagerByLogin) GetIeltsScore() float32 {
+	if x != nil {
+		return x.IeltsScore
+	}
+	return 0
+}
+
+func (x *GetManagerByLogin) GetIeltsAttemptsCount() int32 {
+	if x != nil {
+		return x.IeltsAttemptsCount
+	}
+	return 0
+}
+
+func (x *GetManagerByLogin) GetUserPassword() string {
+	if x != nil {
+		return x.UserPassword
+	}
+	return ""
+}
+
+func (x *GetManagerByLogin) GetStartWorking() string {
+	if x != nil {
+		return x.StartWorking
+	}
+	return ""
+}
+
+func (x *GetManagerByLogin) GetEndWorking() string {
+	if x != nil {
+		return x.EndWorking
+	}
+	return ""
+}
+
+func (x *GetManagerByLogin) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *GetManagerByLogin) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+func (x *GetManagerByLogin) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
 var File_managers_proto protoreflect.FileDescriptor
 
 var file_managers_proto_rawDesc = []byte{
@@ -648,7 +1098,68 @@ var file_managers_proto_rawDesc = []byte{
 	0x3a, 0x0a, 0x08, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x72, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28,
 	0x0b, 0x32, 0x1e, 0x2e, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x72, 0x5f, 0x73, 0x65, 0x72, 0x76,
 	0x69, 0x63, 0x65, 0x5f, 0x67, 0x6f, 0x2e, 0x47, 0x65, 0x74, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65,
-	0x72, 0x52, 0x08, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x72, 0x73, 0x32, 0xb1, 0x03, 0x0a, 0x0e,
+	0x72, 0x52, 0x08, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x72, 0x73, 0x22, 0x59, 0x0a, 0x13, 0x4d,
+	0x61, 0x6e, 0x61, 0x67, 0x65, 0x72, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x6c, 0x6f, 0x67, 0x69, 0x6e,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x75, 0x73, 0x65, 0x72, 0x4c, 0x6f, 0x67, 0x69,
+	0x6e, 0x12, 0x23, 0x0a, 0x0d, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f,
+	0x72, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x75, 0x73, 0x65, 0x72, 0x50, 0x61,
+	0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x22, 0x5e, 0x0a, 0x14, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65,
+	0x72, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x21,
+	0x0a, 0x0c, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x54, 0x6f, 0x6b, 0x65,
+	0x6e, 0x12, 0x23, 0x0a, 0x0d, 0x72, 0x65, 0x66, 0x72, 0x65, 0x73, 0x68, 0x5f, 0x74, 0x6f, 0x6b,
+	0x65, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x72, 0x65, 0x66, 0x72, 0x65, 0x73,
+	0x68, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x2c, 0x0a, 0x16, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65,
+	0x72, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x12, 0x12, 0x0a, 0x04, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04,
+	0x6d, 0x61, 0x69, 0x6c, 0x22, 0x7f, 0x0a, 0x1a, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x72, 0x52,
+	0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x04, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x10, 0x0a, 0x03, 0x6f, 0x74, 0x70, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x03, 0x6f, 0x74, 0x70, 0x12, 0x3b, 0x0a, 0x07, 0x4d, 0x61, 0x6e, 0x61,
+	0x67, 0x65, 0x72, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x21, 0x2e, 0x6d, 0x61, 0x6e, 0x61,
+	0x67, 0x65, 0x72, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x67, 0x6f, 0x2e, 0x43,
+	0x72, 0x65, 0x61, 0x74, 0x65, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x72, 0x52, 0x07, 0x4d, 0x61,
+	0x6e, 0x61, 0x67, 0x65, 0x72, 0x22, 0x72, 0x0a, 0x0e, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x50,
+	0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x1c, 0x0a, 0x09, 0x55, 0x73, 0x65, 0x72, 0x4c,
+	0x6f, 0x67, 0x69, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x55, 0x73, 0x65, 0x72,
+	0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12, 0x20, 0x0a, 0x0b, 0x4f, 0x6c, 0x64, 0x50, 0x61, 0x73, 0x73,
+	0x77, 0x6f, 0x72, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x4f, 0x6c, 0x64, 0x50,
+	0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x20, 0x0a, 0x0b, 0x4e, 0x65, 0x77, 0x50, 0x61,
+	0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x4e, 0x65,
+	0x77, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x22, 0xef, 0x03, 0x0a, 0x11, 0x47, 0x65,
+	0x74, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x72, 0x42, 0x79, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12,
+	0x1b, 0x0a, 0x09, 0x62, 0x72, 0x61, 0x6e, 0x63, 0x68, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x08, 0x62, 0x72, 0x61, 0x6e, 0x63, 0x68, 0x49, 0x64, 0x12, 0x1d, 0x0a, 0x0a,
+	0x75, 0x73, 0x65, 0x72, 0x5f, 0x6c, 0x6f, 0x67, 0x69, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x09, 0x75, 0x73, 0x65, 0x72, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12, 0x1a, 0x0a, 0x08, 0x62,
+	0x69, 0x72, 0x74, 0x68, 0x64, 0x61, 0x79, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x62,
+	0x69, 0x72, 0x74, 0x68, 0x64, 0x61, 0x79, 0x12, 0x16, 0x0a, 0x06, 0x67, 0x65, 0x6e, 0x64, 0x65,
+	0x72, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x67, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x12,
+	0x1a, 0x0a, 0x08, 0x66, 0x75, 0x6c, 0x6c, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x08, 0x66, 0x75, 0x6c, 0x6c, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x65,
+	0x6d, 0x61, 0x69, 0x6c, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x6d, 0x61, 0x69,
+	0x6c, 0x12, 0x14, 0x0a, 0x05, 0x70, 0x68, 0x6f, 0x6e, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x05, 0x70, 0x68, 0x6f, 0x6e, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x61, 0x6c, 0x61, 0x72,
+	0x79, 0x18, 0x08, 0x20, 0x01, 0x28, 0x02, 0x52, 0x06, 0x73, 0x61, 0x6c, 0x61, 0x72, 0x79, 0x12,
+	0x1f, 0x0a, 0x0b, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x5f, 0x73, 0x63, 0x6f, 0x72, 0x65, 0x18, 0x09,
+	0x20, 0x01, 0x28, 0x02, 0x52, 0x0a, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x53, 0x63, 0x6f, 0x72, 0x65,
+	0x12, 0x30, 0x0a, 0x14, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x5f, 0x61, 0x74, 0x74, 0x65, 0x6d, 0x70,
+	0x74, 0x73, 0x5f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x05, 0x52, 0x12,
+	0x69, 0x65, 0x6c, 0x74, 0x73, 0x41, 0x74, 0x74, 0x65, 0x6d, 0x70, 0x74, 0x73, 0x43, 0x6f, 0x75,
+	0x6e, 0x74, 0x12, 0x23, 0x0a, 0x0d, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x70, 0x61, 0x73, 0x73, 0x77,
+	0x6f, 0x72, 0x64, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x75, 0x73, 0x65, 0x72, 0x50,
+	0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x23, 0x0a, 0x0d, 0x73, 0x74, 0x61, 0x72, 0x74,
+	0x5f, 0x77, 0x6f, 0x72, 0x6b, 0x69, 0x6e, 0x67, 0x18, 0x0c, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c,
+	0x73, 0x74, 0x61, 0x72, 0x74, 0x57, 0x6f, 0x72, 0x6b, 0x69, 0x6e, 0x67, 0x12, 0x1f, 0x0a, 0x0b,
+	0x65, 0x6e, 0x64, 0x5f, 0x77, 0x6f, 0x72, 0x6b, 0x69, 0x6e, 0x67, 0x18, 0x0d, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0a, 0x65, 0x6e, 0x64, 0x57, 0x6f, 0x72, 0x6b, 0x69, 0x6e, 0x67, 0x12, 0x1d, 0x0a,
+	0x0a, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x0e, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x09, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x1d, 0x0a, 0x0a,
+	0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x0f, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x09, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69,
+	0x64, 0x18, 0x10, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x32, 0xb1, 0x03, 0x0a, 0x0e,
 	0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x72, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x4d,
 	0x0a, 0x06, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x12, 0x21, 0x2e, 0x6d, 0x61, 0x6e, 0x61, 0x67,
 	0x65, 0x72, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x67, 0x6f, 0x2e, 0x43, 0x72,
@@ -693,33 +1204,40 @@ func file_managers_proto_rawDescGZIP() []byte {
 	return file_managers_proto_rawDescData
 }
 
-var file_managers_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_managers_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_managers_proto_goTypes = []interface{}{
-	(*ManagerPrimaryKey)(nil),      // 0: manager_service_go.ManagerPrimaryKey
-	(*CreateManager)(nil),          // 1: manager_service_go.CreateManager
-	(*GetManager)(nil),             // 2: manager_service_go.GetManager
-	(*UpdateManager)(nil),          // 3: manager_service_go.UpdateManager
-	(*GetListManagerRequest)(nil),  // 4: manager_service_go.GetListManagerRequest
-	(*GetListManagerResponse)(nil), // 5: manager_service_go.GetListManagerResponse
-	(*empty.Empty)(nil),            // 6: google.protobuf.Empty
+	(*ManagerPrimaryKey)(nil),          // 0: manager_service_go.ManagerPrimaryKey
+	(*CreateManager)(nil),              // 1: manager_service_go.CreateManager
+	(*GetManager)(nil),                 // 2: manager_service_go.GetManager
+	(*UpdateManager)(nil),              // 3: manager_service_go.UpdateManager
+	(*GetListManagerRequest)(nil),      // 4: manager_service_go.GetListManagerRequest
+	(*GetListManagerResponse)(nil),     // 5: manager_service_go.GetListManagerResponse
+	(*ManagerLoginRequest)(nil),        // 6: manager_service_go.ManagerLoginRequest
+	(*ManagerLoginResponse)(nil),       // 7: manager_service_go.ManagerLoginResponse
+	(*ManagerRegisterRequest)(nil),     // 8: manager_service_go.ManagerRegisterRequest
+	(*ManagerRegisterConfRequest)(nil), // 9: manager_service_go.ManagerRegisterConfRequest
+	(*ChangePassword)(nil),             // 10: manager_service_go.ChangePassword
+	(*GetManagerByLogin)(nil),          // 11: manager_service_go.GetManagerByLogin
+	(*empty.Empty)(nil),                // 12: google.protobuf.Empty
 }
 var file_managers_proto_depIdxs = []int32{
-	2, // 0: manager_service_go.GetListManagerResponse.Managers:type_name -> manager_service_go.GetManager
-	1, // 1: manager_service_go.ManagerService.Create:input_type -> manager_service_go.CreateManager
-	0, // 2: manager_service_go.ManagerService.GetByID:input_type -> manager_service_go.ManagerPrimaryKey
-	4, // 3: manager_service_go.ManagerService.GetList:input_type -> manager_service_go.GetListManagerRequest
-	3, // 4: manager_service_go.ManagerService.Update:input_type -> manager_service_go.UpdateManager
-	0, // 5: manager_service_go.ManagerService.Delete:input_type -> manager_service_go.ManagerPrimaryKey
-	2, // 6: manager_service_go.ManagerService.Create:output_type -> manager_service_go.GetManager
-	2, // 7: manager_service_go.ManagerService.GetByID:output_type -> manager_service_go.GetManager
-	5, // 8: manager_service_go.ManagerService.GetList:output_type -> manager_service_go.GetListManagerResponse
-	2, // 9: manager_service_go.ManagerService.Update:output_type -> manager_service_go.GetManager
-	6, // 10: manager_service_go.ManagerService.Delete:output_type -> google.protobuf.Empty
-	6, // [6:11] is the sub-list for method output_type
-	1, // [1:6] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	2,  // 0: manager_service_go.GetListManagerResponse.Managers:type_name -> manager_service_go.GetManager
+	1,  // 1: manager_service_go.ManagerRegisterConfRequest.Manager:type_name -> manager_service_go.CreateManager
+	1,  // 2: manager_service_go.ManagerService.Create:input_type -> manager_service_go.CreateManager
+	0,  // 3: manager_service_go.ManagerService.GetByID:input_type -> manager_service_go.ManagerPrimaryKey
+	4,  // 4: manager_service_go.ManagerService.GetList:input_type -> manager_service_go.GetListManagerRequest
+	3,  // 5: manager_service_go.ManagerService.Update:input_type -> manager_service_go.UpdateManager
+	0,  // 6: manager_service_go.ManagerService.Delete:input_type -> manager_service_go.ManagerPrimaryKey
+	2,  // 7: manager_service_go.ManagerService.Create:output_type -> manager_service_go.GetManager
+	2,  // 8: manager_service_go.ManagerService.GetByID:output_type -> manager_service_go.GetManager
+	5,  // 9: manager_service_go.ManagerService.GetList:output_type -> manager_service_go.GetListManagerResponse
+	2,  // 10: manager_service_go.ManagerService.Update:output_type -> manager_service_go.GetManager
+	12, // 11: manager_service_go.ManagerService.Delete:output_type -> google.protobuf.Empty
+	7,  // [7:12] is the sub-list for method output_type
+	2,  // [2:7] is the sub-list for method input_type
+	2,  // [2:2] is the sub-list for extension type_name
+	2,  // [2:2] is the sub-list for extension extendee
+	0,  // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_managers_proto_init() }
@@ -800,6 +1318,78 @@ func file_managers_proto_init() {
 				return nil
 			}
 		}
+		file_managers_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ManagerLoginRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_managers_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ManagerLoginResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_managers_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ManagerRegisterRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_managers_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ManagerRegisterConfRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_managers_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ChangePassword); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_managers_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetManagerByLogin); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -807,7 +1397,7 @@ func file_managers_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_managers_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

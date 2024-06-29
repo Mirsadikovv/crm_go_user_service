@@ -3,13 +3,16 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
-	tc "go_user_service/genproto/teacher_service"
+	"go_user_service/genproto/teacher_service"
 	"go_user_service/pkg"
 	"go_user_service/pkg/hash"
+	"go_user_service/pkg/logger"
 	"go_user_service/storage"
 	"log"
 
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/google/uuid"
@@ -36,7 +39,7 @@ func generateTeacherLogin(db *pgxpool.Pool, ctx context.Context) (string, error)
 	return userLogin, nil
 }
 
-func (c *teacherRepo) Create(ctx context.Context, req *tc.CreateTeacher) (*tc.GetTeacher, error) {
+func (c *teacherRepo) Create(ctx context.Context, req *teacher_service.CreateTeacher) (*teacher_service.GetTeacher, error) {
 	var end_working sql.NullString
 	if req.EndWorking == "" {
 		end_working = sql.NullString{Valid: false}
@@ -90,7 +93,7 @@ func (c *teacherRepo) Create(ctx context.Context, req *tc.CreateTeacher) (*tc.Ge
 		return nil, err
 	}
 
-	teacher, err := c.GetById(ctx, &tc.TeacherPrimaryKey{Id: id})
+	teacher, err := c.GetById(ctx, &teacher_service.TeacherPrimaryKey{Id: id})
 	if err != nil {
 		log.Println("error while getting teacher by id")
 		return nil, err
@@ -98,7 +101,7 @@ func (c *teacherRepo) Create(ctx context.Context, req *tc.CreateTeacher) (*tc.Ge
 	return teacher, nil
 }
 
-func (c *teacherRepo) Update(ctx context.Context, req *tc.UpdateTeacher) (*tc.GetTeacher, error) {
+func (c *teacherRepo) Update(ctx context.Context, req *teacher_service.UpdateTeacher) (*teacher_service.GetTeacher, error) {
 	var end_working sql.NullString
 	if req.EndWorking == "" {
 		end_working = sql.NullString{Valid: false}
@@ -138,7 +141,7 @@ func (c *teacherRepo) Update(ctx context.Context, req *tc.UpdateTeacher) (*tc.Ge
 		return nil, err
 	}
 
-	teacher, err := c.GetById(ctx, &tc.TeacherPrimaryKey{Id: req.Id})
+	teacher, err := c.GetById(ctx, &teacher_service.TeacherPrimaryKey{Id: req.Id})
 	if err != nil {
 		log.Println("error while getting teacher by id")
 		return nil, err
@@ -146,8 +149,8 @@ func (c *teacherRepo) Update(ctx context.Context, req *tc.UpdateTeacher) (*tc.Ge
 	return teacher, nil
 }
 
-func (c *teacherRepo) GetAll(ctx context.Context, req *tc.GetListTeacherRequest) (*tc.GetListTeacherResponse, error) {
-	teachers := tc.GetListTeacherResponse{}
+func (c *teacherRepo) GetAll(ctx context.Context, req *teacher_service.GetListTeacherRequest) (*teacher_service.GetListTeacherResponse, error) {
+	teachers := teacher_service.GetListTeacherResponse{}
 	var (
 		created_at    sql.NullString
 		updated_at    sql.NullString
@@ -188,7 +191,7 @@ func (c *teacherRepo) GetAll(ctx context.Context, req *tc.GetListTeacherRequest)
 	defer rows.Close()
 	for rows.Next() {
 		var (
-			teacher tc.GetTeacher
+			teacher teacher_service.GetTeacher
 		)
 		if err = rows.Scan(
 			&teacher.Id,
@@ -225,9 +228,9 @@ func (c *teacherRepo) GetAll(ctx context.Context, req *tc.GetListTeacherRequest)
 	return &teachers, nil
 }
 
-func (c *teacherRepo) GetById(ctx context.Context, id *tc.TeacherPrimaryKey) (*tc.GetTeacher, error) {
+func (c *teacherRepo) GetById(ctx context.Context, id *teacher_service.TeacherPrimaryKey) (*teacher_service.GetTeacher, error) {
 	var (
-		teacher       tc.GetTeacher
+		teacher       teacher_service.GetTeacher
 		created_at    sql.NullString
 		updated_at    sql.NullString
 		start_working sql.NullString
@@ -281,7 +284,7 @@ func (c *teacherRepo) GetById(ctx context.Context, id *tc.TeacherPrimaryKey) (*t
 	return &teacher, nil
 }
 
-func (c *teacherRepo) Delete(ctx context.Context, id *tc.TeacherPrimaryKey) (emptypb.Empty, error) {
+func (c *teacherRepo) Delete(ctx context.Context, id *teacher_service.TeacherPrimaryKey) (emptypb.Empty, error) {
 
 	_, err := c.db.Exec(ctx, `
 		UPDATE teachers SET
@@ -294,4 +297,137 @@ func (c *teacherRepo) Delete(ctx context.Context, id *tc.TeacherPrimaryKey) (emp
 		return emptypb.Empty{}, err
 	}
 	return emptypb.Empty{}, nil
+}
+
+///////////////////////////////////////////////////1222222222222222222222222222222222222222222222222222222222222222
+
+/////////////////////////////////////////////////////33333333333333333333333333333333333333333333333333333333333333
+
+func (c *teacherRepo) ChangePassword(ctx context.Context, pass *teacher_service.ChangePassword) (string, error) {
+	var hashedPass string
+
+	query := `SELECT user_password
+	FROM teachers
+	WHERE user_login = $1 AND deleted_at is null`
+
+	err := c.db.QueryRow(ctx, query,
+		pass.UserLogin,
+	).Scan(&hashedPass)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", errors.New("incorrect login")
+		}
+		log.Println("failed to get teacher password from database", logger.Error(err))
+		return "", err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPass), []byte(pass.OldPassword))
+	if err != nil {
+		return "", errors.New("password mismatch")
+	}
+
+	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(pass.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		log.Println("failed to generate teacher new password", logger.Error(err))
+		return "", err
+	}
+
+	query = `UPDATE teachers SET 
+		user_password = $1, 
+		updated_at = NOW() 
+	WHERE user_login = $2 AND deleted_at is null`
+
+	_, err = c.db.Exec(ctx, query, newHashedPassword, pass.UserLogin)
+	if err != nil {
+		log.Println("failed to change teacher password in database", logger.Error(err))
+		return "", err
+	}
+
+	return "Password changed successfully", nil
+}
+
+func (c *teacherRepo) GetByLogin(ctx context.Context, login string) (*teacher_service.GetTeacherByLogin, error) {
+	var (
+		teacher       teacher_service.GetTeacherByLogin
+		birthday      sql.NullString
+		start_working sql.NullString
+		end_working   sql.NullString
+		created_at    sql.NullString
+		updated_at    sql.NullString
+	)
+
+	query := `SELECT 
+		id, 
+		branch_id,
+		user_login,
+		birthday, 
+		gender,
+		fullname,
+		email,
+		phone,
+		user_password,
+		salary,
+		ielts_score,
+		ielts_attempts_count,
+		start_working,
+		end_working,
+		created_at, 
+		updated_at
+		FROM teachers WHERE user_login = $1 AND deleted_at is null`
+
+	row := c.db.QueryRow(ctx, query, login)
+
+	err := row.Scan(
+		&teacher.Id,
+		&teacher.BranchId,
+		&teacher.UserLogin,
+		&birthday,
+		&teacher.Gender,
+		&teacher.Fullname,
+		&teacher.Email,
+		&teacher.Phone,
+		&teacher.UserPassword,
+		&teacher.Salary,
+		&teacher.IeltsScore,
+		&teacher.IeltsAttemptsCount,
+		&start_working,
+		&end_working,
+		&created_at,
+		&updated_at,
+	)
+
+	if err != nil {
+		log.Println("failed to scan teacher by LOGIN from database", logger.Error(err))
+		return &teacher_service.GetTeacherByLogin{}, err
+	}
+
+	teacher.Birthday = pkg.NullStringToString(birthday)
+	teacher.StartWorking = pkg.NullStringToString(start_working)
+	teacher.EndWorking = pkg.NullStringToString(end_working)
+	teacher.CreatedAt = pkg.NullStringToString(created_at)
+	teacher.UpdatedAt = pkg.NullStringToString(updated_at)
+
+	return &teacher, nil
+}
+
+func (c *teacherRepo) GetPassword(ctx context.Context, login string) (string, error) {
+	var hashedPass string
+
+	query := `SELECT user_password
+	FROM teachers
+	WHERE user_login = $1 AND deleted_at is null`
+
+	err := c.db.QueryRow(ctx, query, login).Scan(&hashedPass)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", errors.New("incorrect login")
+		} else {
+			log.Println("failed to get teacher password from database", logger.Error(err))
+			return "", err
+		}
+	}
+
+	return hashedPass, nil
 }

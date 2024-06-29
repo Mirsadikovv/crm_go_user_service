@@ -3,10 +3,12 @@ module go_user_service
 go 1.22.1
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/golang/protobuf v1.5.4
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v4 v4.18.3
 	github.com/joho/godotenv v1.5.1
+	github.com/redis/go-redis/v9 v9.5.3
 	github.com/saidamir98/udevs_pkg v0.0.0-20230619074042-397de4e67eeb
 	github.com/spf13/cast v1.6.0
 	go.uber.org/zap v1.21.0
@@ -17,6 +19,8 @@ require (
 
 require (
 	github.com/blendle/zapdriver v1.3.1 // indirect
+	github.com/cespare/xxhash/v2 v2.2.0 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.14.3 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect

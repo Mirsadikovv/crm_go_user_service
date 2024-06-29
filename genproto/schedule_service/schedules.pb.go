@@ -73,16 +73,16 @@ type CreateSchedule struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	GroupId     string `protobuf:"bytes,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	LessonId    string `protobuf:"bytes,2,opt,name=lesson_id,json=lessonId,proto3" json:"lesson_id,omitempty"`
-	Classroom   string `protobuf:"bytes,3,opt,name=classroom,proto3" json:"classroom,omitempty"`
-	GroupName   string `protobuf:"bytes,4,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"`
-	TypeOfGroup string `protobuf:"bytes,5,opt,name=type_of_group,json=typeOfGroup,proto3" json:"type_of_group,omitempty"`
-	Task        string `protobuf:"bytes,6,opt,name=task,proto3" json:"task,omitempty"`
-	Deadline    string `protobuf:"bytes,7,opt,name=deadline,proto3" json:"deadline,omitempty"`
-	Score       string `protobuf:"bytes,8,opt,name=score,proto3" json:"score,omitempty"`
-	StartTime   string `protobuf:"bytes,9,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
-	EndTime     string `protobuf:"bytes,10,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	GroupId     string  `protobuf:"bytes,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	LessonId    string  `protobuf:"bytes,2,opt,name=lesson_id,json=lessonId,proto3" json:"lesson_id,omitempty"`
+	Classroom   string  `protobuf:"bytes,3,opt,name=classroom,proto3" json:"classroom,omitempty"`
+	GroupName   string  `protobuf:"bytes,4,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"`
+	TypeOfGroup string  `protobuf:"bytes,5,opt,name=type_of_group,json=typeOfGroup,proto3" json:"type_of_group,omitempty"`
+	Task        string  `protobuf:"bytes,6,opt,name=task,proto3" json:"task,omitempty"`
+	Deadline    string  `protobuf:"bytes,7,opt,name=deadline,proto3" json:"deadline,omitempty"`
+	Score       float32 `protobuf:"fixed32,8,opt,name=score,proto3" json:"score,omitempty"`
+	StartTime   string  `protobuf:"bytes,9,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime     string  `protobuf:"bytes,10,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
 }
 
 func (x *CreateSchedule) Reset() {
@@ -166,11 +166,11 @@ func (x *CreateSchedule) GetDeadline() string {
 	return ""
 }
 
-func (x *CreateSchedule) GetScore() string {
+func (x *CreateSchedule) GetScore() float32 {
 	if x != nil {
 		return x.Score
 	}
-	return ""
+	return 0
 }
 
 func (x *CreateSchedule) GetStartTime() string {
@@ -192,19 +192,19 @@ type GetSchedule struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	GroupId     string `protobuf:"bytes,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	LessonId    string `protobuf:"bytes,2,opt,name=lesson_id,json=lessonId,proto3" json:"lesson_id,omitempty"`
-	Classroom   string `protobuf:"bytes,3,opt,name=classroom,proto3" json:"classroom,omitempty"`
-	GroupName   string `protobuf:"bytes,4,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"`
-	TypeOfGroup string `protobuf:"bytes,5,opt,name=type_of_group,json=typeOfGroup,proto3" json:"type_of_group,omitempty"`
-	Task        string `protobuf:"bytes,6,opt,name=task,proto3" json:"task,omitempty"`
-	Deadline    string `protobuf:"bytes,7,opt,name=deadline,proto3" json:"deadline,omitempty"`
-	Score       string `protobuf:"bytes,8,opt,name=score,proto3" json:"score,omitempty"`
-	StartTime   string `protobuf:"bytes,9,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
-	EndTime     string `protobuf:"bytes,10,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
-	CreatedAt   string `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt   string `protobuf:"bytes,12,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	Id          string `protobuf:"bytes,13,opt,name=id,proto3" json:"id,omitempty"`
+	GroupId     string  `protobuf:"bytes,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	LessonId    string  `protobuf:"bytes,2,opt,name=lesson_id,json=lessonId,proto3" json:"lesson_id,omitempty"`
+	Classroom   string  `protobuf:"bytes,3,opt,name=classroom,proto3" json:"classroom,omitempty"`
+	GroupName   string  `protobuf:"bytes,4,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"`
+	TypeOfGroup string  `protobuf:"bytes,5,opt,name=type_of_group,json=typeOfGroup,proto3" json:"type_of_group,omitempty"`
+	Task        string  `protobuf:"bytes,6,opt,name=task,proto3" json:"task,omitempty"`
+	Deadline    string  `protobuf:"bytes,7,opt,name=deadline,proto3" json:"deadline,omitempty"`
+	Score       float32 `protobuf:"fixed32,8,opt,name=score,proto3" json:"score,omitempty"`
+	StartTime   string  `protobuf:"bytes,9,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime     string  `protobuf:"bytes,10,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	CreatedAt   string  `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt   string  `protobuf:"bytes,12,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Id          string  `protobuf:"bytes,13,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (x *GetSchedule) Reset() {
@@ -288,11 +288,11 @@ func (x *GetSchedule) GetDeadline() string {
 	return ""
 }
 
-func (x *GetSchedule) GetScore() string {
+func (x *GetSchedule) GetScore() float32 {
 	if x != nil {
 		return x.Score
 	}
-	return ""
+	return 0
 }
 
 func (x *GetSchedule) GetStartTime() string {
@@ -335,17 +335,17 @@ type UpdateSchedule struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	GroupId     string `protobuf:"bytes,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	LessonId    string `protobuf:"bytes,2,opt,name=lesson_id,json=lessonId,proto3" json:"lesson_id,omitempty"`
-	Classroom   string `protobuf:"bytes,3,opt,name=classroom,proto3" json:"classroom,omitempty"`
-	GroupName   string `protobuf:"bytes,4,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"`
-	TypeOfGroup string `protobuf:"bytes,5,opt,name=type_of_group,json=typeOfGroup,proto3" json:"type_of_group,omitempty"`
-	Task        string `protobuf:"bytes,6,opt,name=task,proto3" json:"task,omitempty"`
-	Deadline    string `protobuf:"bytes,7,opt,name=deadline,proto3" json:"deadline,omitempty"`
-	Score       string `protobuf:"bytes,8,opt,name=score,proto3" json:"score,omitempty"`
-	StartTime   string `protobuf:"bytes,9,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
-	EndTime     string `protobuf:"bytes,10,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
-	Id          string `protobuf:"bytes,11,opt,name=id,proto3" json:"id,omitempty"`
+	GroupId     string  `protobuf:"bytes,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	LessonId    string  `protobuf:"bytes,2,opt,name=lesson_id,json=lessonId,proto3" json:"lesson_id,omitempty"`
+	Classroom   string  `protobuf:"bytes,3,opt,name=classroom,proto3" json:"classroom,omitempty"`
+	GroupName   string  `protobuf:"bytes,4,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"`
+	TypeOfGroup string  `protobuf:"bytes,5,opt,name=type_of_group,json=typeOfGroup,proto3" json:"type_of_group,omitempty"`
+	Task        string  `protobuf:"bytes,6,opt,name=task,proto3" json:"task,omitempty"`
+	Deadline    string  `protobuf:"bytes,7,opt,name=deadline,proto3" json:"deadline,omitempty"`
+	Score       float32 `protobuf:"fixed32,8,opt,name=score,proto3" json:"score,omitempty"`
+	StartTime   string  `protobuf:"bytes,9,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime     string  `protobuf:"bytes,10,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	Id          string  `protobuf:"bytes,11,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (x *UpdateSchedule) Reset() {
@@ -429,11 +429,11 @@ func (x *UpdateSchedule) GetDeadline() string {
 	return ""
 }
 
-func (x *UpdateSchedule) GetScore() string {
+func (x *UpdateSchedule) GetScore() float32 {
 	if x != nil {
 		return x.Score
 	}
-	return ""
+	return 0
 }
 
 func (x *UpdateSchedule) GetStartTime() string {
@@ -599,7 +599,7 @@ var file_schedules_proto_rawDesc = []byte{
 	0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x61, 0x73, 0x6b, 0x12, 0x1a, 0x0a, 0x08, 0x64, 0x65, 0x61,
 	0x64, 0x6c, 0x69, 0x6e, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x64, 0x65, 0x61,
 	0x64, 0x6c, 0x69, 0x6e, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x73, 0x63, 0x6f, 0x72, 0x65, 0x18, 0x08,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x73, 0x63, 0x6f, 0x72, 0x65, 0x12, 0x1d, 0x0a, 0x0a, 0x73,
+	0x20, 0x01, 0x28, 0x02, 0x52, 0x05, 0x73, 0x63, 0x6f, 0x72, 0x65, 0x12, 0x1d, 0x0a, 0x0a, 0x73,
 	0x74, 0x61, 0x72, 0x74, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x09, 0x20, 0x01, 0x28, 0x09, 0x52,
 	0x09, 0x73, 0x74, 0x61, 0x72, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x12, 0x19, 0x0a, 0x08, 0x65, 0x6e,
 	0x64, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x65, 0x6e,
@@ -617,7 +617,7 @@ var file_schedules_proto_rawDesc = []byte{
 	0x0a, 0x04, 0x74, 0x61, 0x73, 0x6b, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x61,
 	0x73, 0x6b, 0x12, 0x1a, 0x0a, 0x08, 0x64, 0x65, 0x61, 0x64, 0x6c, 0x69, 0x6e, 0x65, 0x18, 0x07,
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x64, 0x65, 0x61, 0x64, 0x6c, 0x69, 0x6e, 0x65, 0x12, 0x14,
-	0x0a, 0x05, 0x73, 0x63, 0x6f, 0x72, 0x65, 0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x73,
+	0x0a, 0x05, 0x73, 0x63, 0x6f, 0x72, 0x65, 0x18, 0x08, 0x20, 0x01, 0x28, 0x02, 0x52, 0x05, 0x73,
 	0x63, 0x6f, 0x72, 0x65, 0x12, 0x1d, 0x0a, 0x0a, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5f, 0x74, 0x69,
 	0x6d, 0x65, 0x18, 0x09, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x73, 0x74, 0x61, 0x72, 0x74, 0x54,
 	0x69, 0x6d, 0x65, 0x12, 0x19, 0x0a, 0x08, 0x65, 0x6e, 0x64, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18,
@@ -641,7 +641,7 @@ var file_schedules_proto_rawDesc = []byte{
 	0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x61, 0x73, 0x6b, 0x12, 0x1a, 0x0a, 0x08,
 	0x64, 0x65, 0x61, 0x64, 0x6c, 0x69, 0x6e, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
 	0x64, 0x65, 0x61, 0x64, 0x6c, 0x69, 0x6e, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x73, 0x63, 0x6f, 0x72,
-	0x65, 0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x73, 0x63, 0x6f, 0x72, 0x65, 0x12, 0x1d,
+	0x65, 0x18, 0x08, 0x20, 0x01, 0x28, 0x02, 0x52, 0x05, 0x73, 0x63, 0x6f, 0x72, 0x65, 0x12, 0x1d,
 	0x0a, 0x0a, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x09, 0x20, 0x01,
 	0x28, 0x09, 0x52, 0x09, 0x73, 0x74, 0x61, 0x72, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x12, 0x19, 0x0a,
 	0x08, 0x65, 0x6e, 0x64, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52,

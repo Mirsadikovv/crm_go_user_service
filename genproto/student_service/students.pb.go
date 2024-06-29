@@ -567,6 +567,456 @@ func (x *GetListStudentResponse) GetStudents() []*GetStudent {
 	return nil
 }
 
+type StudentLoginRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserLogin    string `protobuf:"bytes,1,opt,name=user_login,json=userLogin,proto3" json:"user_login,omitempty"`
+	UserPassword string `protobuf:"bytes,2,opt,name=user_password,json=userPassword,proto3" json:"user_password,omitempty"`
+}
+
+func (x *StudentLoginRequest) Reset() {
+	*x = StudentLoginRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_students_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *StudentLoginRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StudentLoginRequest) ProtoMessage() {}
+
+func (x *StudentLoginRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_students_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StudentLoginRequest.ProtoReflect.Descriptor instead.
+func (*StudentLoginRequest) Descriptor() ([]byte, []int) {
+	return file_students_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *StudentLoginRequest) GetUserLogin() string {
+	if x != nil {
+		return x.UserLogin
+	}
+	return ""
+}
+
+func (x *StudentLoginRequest) GetUserPassword() string {
+	if x != nil {
+		return x.UserPassword
+	}
+	return ""
+}
+
+type StudentLoginResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	AccessToken  string `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken string `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+}
+
+func (x *StudentLoginResponse) Reset() {
+	*x = StudentLoginResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_students_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *StudentLoginResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StudentLoginResponse) ProtoMessage() {}
+
+func (x *StudentLoginResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_students_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StudentLoginResponse.ProtoReflect.Descriptor instead.
+func (*StudentLoginResponse) Descriptor() ([]byte, []int) {
+	return file_students_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *StudentLoginResponse) GetAccessToken() string {
+	if x != nil {
+		return x.AccessToken
+	}
+	return ""
+}
+
+func (x *StudentLoginResponse) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
+type StudentRegisterRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Mail string `protobuf:"bytes,1,opt,name=mail,proto3" json:"mail,omitempty"`
+}
+
+func (x *StudentRegisterRequest) Reset() {
+	*x = StudentRegisterRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_students_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *StudentRegisterRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StudentRegisterRequest) ProtoMessage() {}
+
+func (x *StudentRegisterRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_students_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StudentRegisterRequest.ProtoReflect.Descriptor instead.
+func (*StudentRegisterRequest) Descriptor() ([]byte, []int) {
+	return file_students_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *StudentRegisterRequest) GetMail() string {
+	if x != nil {
+		return x.Mail
+	}
+	return ""
+}
+
+type StudentRegisterConfRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Mail    string           `protobuf:"bytes,1,opt,name=mail,proto3" json:"mail,omitempty"`
+	Otp     string           `protobuf:"bytes,2,opt,name=otp,proto3" json:"otp,omitempty"`
+	Student []*CreateStudent `protobuf:"bytes,3,rep,name=Student,proto3" json:"Student,omitempty"`
+}
+
+func (x *StudentRegisterConfRequest) Reset() {
+	*x = StudentRegisterConfRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_students_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *StudentRegisterConfRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StudentRegisterConfRequest) ProtoMessage() {}
+
+func (x *StudentRegisterConfRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_students_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StudentRegisterConfRequest.ProtoReflect.Descriptor instead.
+func (*StudentRegisterConfRequest) Descriptor() ([]byte, []int) {
+	return file_students_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *StudentRegisterConfRequest) GetMail() string {
+	if x != nil {
+		return x.Mail
+	}
+	return ""
+}
+
+func (x *StudentRegisterConfRequest) GetOtp() string {
+	if x != nil {
+		return x.Otp
+	}
+	return ""
+}
+
+func (x *StudentRegisterConfRequest) GetStudent() []*CreateStudent {
+	if x != nil {
+		return x.Student
+	}
+	return nil
+}
+
+type ChangePassword struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserLogin   string `protobuf:"bytes,1,opt,name=UserLogin,proto3" json:"UserLogin,omitempty"`
+	OldPassword string `protobuf:"bytes,2,opt,name=OldPassword,proto3" json:"OldPassword,omitempty"`
+	NewPassword string `protobuf:"bytes,3,opt,name=NewPassword,proto3" json:"NewPassword,omitempty"`
+}
+
+func (x *ChangePassword) Reset() {
+	*x = ChangePassword{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_students_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ChangePassword) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChangePassword) ProtoMessage() {}
+
+func (x *ChangePassword) ProtoReflect() protoreflect.Message {
+	mi := &file_students_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChangePassword.ProtoReflect.Descriptor instead.
+func (*ChangePassword) Descriptor() ([]byte, []int) {
+	return file_students_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ChangePassword) GetUserLogin() string {
+	if x != nil {
+		return x.UserLogin
+	}
+	return ""
+}
+
+func (x *ChangePassword) GetOldPassword() string {
+	if x != nil {
+		return x.OldPassword
+	}
+	return ""
+}
+
+func (x *ChangePassword) GetNewPassword() string {
+	if x != nil {
+		return x.NewPassword
+	}
+	return ""
+}
+
+type GetStudentByLogin struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	BranchId           string  `protobuf:"bytes,1,opt,name=branch_id,json=branchId,proto3" json:"branch_id,omitempty"`
+	UserLogin          string  `protobuf:"bytes,2,opt,name=user_login,json=userLogin,proto3" json:"user_login,omitempty"`
+	Birthday           string  `protobuf:"bytes,3,opt,name=birthday,proto3" json:"birthday,omitempty"`
+	Gender             string  `protobuf:"bytes,4,opt,name=gender,proto3" json:"gender,omitempty"`
+	Fullname           string  `protobuf:"bytes,5,opt,name=fullname,proto3" json:"fullname,omitempty"`
+	Email              string  `protobuf:"bytes,6,opt,name=email,proto3" json:"email,omitempty"`
+	Phone              string  `protobuf:"bytes,7,opt,name=phone,proto3" json:"phone,omitempty"`
+	Salary             float32 `protobuf:"fixed32,8,opt,name=salary,proto3" json:"salary,omitempty"`
+	IeltsScore         float32 `protobuf:"fixed32,9,opt,name=ielts_score,json=ieltsScore,proto3" json:"ielts_score,omitempty"`
+	IeltsAttemptsCount int32   `protobuf:"varint,10,opt,name=ielts_attempts_count,json=ieltsAttemptsCount,proto3" json:"ielts_attempts_count,omitempty"`
+	UserPassword       string  `protobuf:"bytes,11,opt,name=user_password,json=userPassword,proto3" json:"user_password,omitempty"`
+	StartWorking       string  `protobuf:"bytes,12,opt,name=start_working,json=startWorking,proto3" json:"start_working,omitempty"`
+	EndWorking         string  `protobuf:"bytes,13,opt,name=end_working,json=endWorking,proto3" json:"end_working,omitempty"`
+	CreatedAt          string  `protobuf:"bytes,14,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt          string  `protobuf:"bytes,15,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Id                 string  `protobuf:"bytes,16,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *GetStudentByLogin) Reset() {
+	*x = GetStudentByLogin{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_students_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetStudentByLogin) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetStudentByLogin) ProtoMessage() {}
+
+func (x *GetStudentByLogin) ProtoReflect() protoreflect.Message {
+	mi := &file_students_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetStudentByLogin.ProtoReflect.Descriptor instead.
+func (*GetStudentByLogin) Descriptor() ([]byte, []int) {
+	return file_students_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *GetStudentByLogin) GetBranchId() string {
+	if x != nil {
+		return x.BranchId
+	}
+	return ""
+}
+
+func (x *GetStudentByLogin) GetUserLogin() string {
+	if x != nil {
+		return x.UserLogin
+	}
+	return ""
+}
+
+func (x *GetStudentByLogin) GetBirthday() string {
+	if x != nil {
+		return x.Birthday
+	}
+	return ""
+}
+
+func (x *GetStudentByLogin) GetGender() string {
+	if x != nil {
+		return x.Gender
+	}
+	return ""
+}
+
+func (x *GetStudentByLogin) GetFullname() string {
+	if x != nil {
+		return x.Fullname
+	}
+	return ""
+}
+
+func (x *GetStudentByLogin) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *GetStudentByLogin) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *GetStudentByLogin) GetSalary() float32 {
+	if x != nil {
+		return x.Salary
+	}
+	return 0
+}
+
+func (x *GetStudentByLogin) GetIeltsScore() float32 {
+	if x != nil {
+		return x.IeltsScore
+	}
+	return 0
+}
+
+func (x *GetStudentByLogin) GetIeltsAttemptsCount() int32 {
+	if x != nil {
+		return x.IeltsAttemptsCount
+	}
+	return 0
+}
+
+func (x *GetStudentByLogin) GetUserPassword() string {
+	if x != nil {
+		return x.UserPassword
+	}
+	return ""
+}
+
+func (x *GetStudentByLogin) GetStartWorking() string {
+	if x != nil {
+		return x.StartWorking
+	}
+	return ""
+}
+
+func (x *GetStudentByLogin) GetEndWorking() string {
+	if x != nil {
+		return x.EndWorking
+	}
+	return ""
+}
+
+func (x *GetStudentByLogin) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *GetStudentByLogin) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+func (x *GetStudentByLogin) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
 var File_students_proto protoreflect.FileDescriptor
 
 var file_students_proto_rawDesc = []byte{
@@ -647,7 +1097,68 @@ var file_students_proto_rawDesc = []byte{
 	0x12, 0x3a, 0x0a, 0x08, 0x53, 0x74, 0x75, 0x64, 0x65, 0x6e, 0x74, 0x73, 0x18, 0x02, 0x20, 0x03,
 	0x28, 0x0b, 0x32, 0x1e, 0x2e, 0x73, 0x74, 0x75, 0x64, 0x65, 0x6e, 0x74, 0x5f, 0x73, 0x65, 0x72,
 	0x76, 0x69, 0x63, 0x65, 0x5f, 0x67, 0x6f, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x74, 0x75, 0x64, 0x65,
-	0x6e, 0x74, 0x52, 0x08, 0x53, 0x74, 0x75, 0x64, 0x65, 0x6e, 0x74, 0x73, 0x32, 0xb1, 0x03, 0x0a,
+	0x6e, 0x74, 0x52, 0x08, 0x53, 0x74, 0x75, 0x64, 0x65, 0x6e, 0x74, 0x73, 0x22, 0x59, 0x0a, 0x13,
+	0x53, 0x74, 0x75, 0x64, 0x65, 0x6e, 0x74, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x6c, 0x6f, 0x67, 0x69,
+	0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x75, 0x73, 0x65, 0x72, 0x4c, 0x6f, 0x67,
+	0x69, 0x6e, 0x12, 0x23, 0x0a, 0x0d, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x70, 0x61, 0x73, 0x73, 0x77,
+	0x6f, 0x72, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x75, 0x73, 0x65, 0x72, 0x50,
+	0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x22, 0x5e, 0x0a, 0x14, 0x53, 0x74, 0x75, 0x64, 0x65,
+	0x6e, 0x74, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x21, 0x0a, 0x0c, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x54, 0x6f, 0x6b,
+	0x65, 0x6e, 0x12, 0x23, 0x0a, 0x0d, 0x72, 0x65, 0x66, 0x72, 0x65, 0x73, 0x68, 0x5f, 0x74, 0x6f,
+	0x6b, 0x65, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x72, 0x65, 0x66, 0x72, 0x65,
+	0x73, 0x68, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x2c, 0x0a, 0x16, 0x53, 0x74, 0x75, 0x64, 0x65,
+	0x6e, 0x74, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x12, 0x12, 0x0a, 0x04, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x04, 0x6d, 0x61, 0x69, 0x6c, 0x22, 0x7f, 0x0a, 0x1a, 0x53, 0x74, 0x75, 0x64, 0x65, 0x6e, 0x74,
+	0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x04, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x10, 0x0a, 0x03, 0x6f, 0x74, 0x70, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6f, 0x74, 0x70, 0x12, 0x3b, 0x0a, 0x07, 0x53, 0x74, 0x75,
+	0x64, 0x65, 0x6e, 0x74, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x21, 0x2e, 0x73, 0x74, 0x75,
+	0x64, 0x65, 0x6e, 0x74, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x67, 0x6f, 0x2e,
+	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x74, 0x75, 0x64, 0x65, 0x6e, 0x74, 0x52, 0x07, 0x53,
+	0x74, 0x75, 0x64, 0x65, 0x6e, 0x74, 0x22, 0x72, 0x0a, 0x0e, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65,
+	0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x1c, 0x0a, 0x09, 0x55, 0x73, 0x65, 0x72,
+	0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x55, 0x73, 0x65,
+	0x72, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12, 0x20, 0x0a, 0x0b, 0x4f, 0x6c, 0x64, 0x50, 0x61, 0x73,
+	0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x4f, 0x6c, 0x64,
+	0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x20, 0x0a, 0x0b, 0x4e, 0x65, 0x77, 0x50,
+	0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x4e,
+	0x65, 0x77, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x22, 0xef, 0x03, 0x0a, 0x11, 0x47,
+	0x65, 0x74, 0x53, 0x74, 0x75, 0x64, 0x65, 0x6e, 0x74, 0x42, 0x79, 0x4c, 0x6f, 0x67, 0x69, 0x6e,
+	0x12, 0x1b, 0x0a, 0x09, 0x62, 0x72, 0x61, 0x6e, 0x63, 0x68, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x08, 0x62, 0x72, 0x61, 0x6e, 0x63, 0x68, 0x49, 0x64, 0x12, 0x1d, 0x0a,
+	0x0a, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x6c, 0x6f, 0x67, 0x69, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x09, 0x75, 0x73, 0x65, 0x72, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12, 0x1a, 0x0a, 0x08,
+	0x62, 0x69, 0x72, 0x74, 0x68, 0x64, 0x61, 0x79, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
+	0x62, 0x69, 0x72, 0x74, 0x68, 0x64, 0x61, 0x79, 0x12, 0x16, 0x0a, 0x06, 0x67, 0x65, 0x6e, 0x64,
+	0x65, 0x72, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x67, 0x65, 0x6e, 0x64, 0x65, 0x72,
+	0x12, 0x1a, 0x0a, 0x08, 0x66, 0x75, 0x6c, 0x6c, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x05, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x08, 0x66, 0x75, 0x6c, 0x6c, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05,
+	0x65, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x6d, 0x61,
+	0x69, 0x6c, 0x12, 0x14, 0x0a, 0x05, 0x70, 0x68, 0x6f, 0x6e, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x05, 0x70, 0x68, 0x6f, 0x6e, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x61, 0x6c, 0x61,
+	0x72, 0x79, 0x18, 0x08, 0x20, 0x01, 0x28, 0x02, 0x52, 0x06, 0x73, 0x61, 0x6c, 0x61, 0x72, 0x79,
+	0x12, 0x1f, 0x0a, 0x0b, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x5f, 0x73, 0x63, 0x6f, 0x72, 0x65, 0x18,
+	0x09, 0x20, 0x01, 0x28, 0x02, 0x52, 0x0a, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x53, 0x63, 0x6f, 0x72,
+	0x65, 0x12, 0x30, 0x0a, 0x14, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x5f, 0x61, 0x74, 0x74, 0x65, 0x6d,
+	0x70, 0x74, 0x73, 0x5f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x05, 0x52,
+	0x12, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x41, 0x74, 0x74, 0x65, 0x6d, 0x70, 0x74, 0x73, 0x43, 0x6f,
+	0x75, 0x6e, 0x74, 0x12, 0x23, 0x0a, 0x0d, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x70, 0x61, 0x73, 0x73,
+	0x77, 0x6f, 0x72, 0x64, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x75, 0x73, 0x65, 0x72,
+	0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x23, 0x0a, 0x0d, 0x73, 0x74, 0x61, 0x72,
+	0x74, 0x5f, 0x77, 0x6f, 0x72, 0x6b, 0x69, 0x6e, 0x67, 0x18, 0x0c, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x0c, 0x73, 0x74, 0x61, 0x72, 0x74, 0x57, 0x6f, 0x72, 0x6b, 0x69, 0x6e, 0x67, 0x12, 0x1f, 0x0a,
+	0x0b, 0x65, 0x6e, 0x64, 0x5f, 0x77, 0x6f, 0x72, 0x6b, 0x69, 0x6e, 0x67, 0x18, 0x0d, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x0a, 0x65, 0x6e, 0x64, 0x57, 0x6f, 0x72, 0x6b, 0x69, 0x6e, 0x67, 0x12, 0x1d,
+	0x0a, 0x0a, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x0e, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x09, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x1d, 0x0a,
+	0x0a, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x0f, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x09, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x0e, 0x0a, 0x02,
+	0x69, 0x64, 0x18, 0x10, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x32, 0xb1, 0x03, 0x0a,
 	0x0e, 0x53, 0x74, 0x75, 0x64, 0x65, 0x6e, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12,
 	0x4d, 0x0a, 0x06, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x12, 0x21, 0x2e, 0x73, 0x74, 0x75, 0x64,
 	0x65, 0x6e, 0x74, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x67, 0x6f, 0x2e, 0x43,
@@ -692,33 +1203,40 @@ func file_students_proto_rawDescGZIP() []byte {
 	return file_students_proto_rawDescData
 }
 
-var file_students_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_students_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_students_proto_goTypes = []interface{}{
-	(*StudentPrimaryKey)(nil),      // 0: student_service_go.StudentPrimaryKey
-	(*CreateStudent)(nil),          // 1: student_service_go.CreateStudent
-	(*GetStudent)(nil),             // 2: student_service_go.GetStudent
-	(*UpdateStudent)(nil),          // 3: student_service_go.UpdateStudent
-	(*GetListStudentRequest)(nil),  // 4: student_service_go.GetListStudentRequest
-	(*GetListStudentResponse)(nil), // 5: student_service_go.GetListStudentResponse
-	(*empty.Empty)(nil),            // 6: google.protobuf.Empty
+	(*StudentPrimaryKey)(nil),          // 0: student_service_go.StudentPrimaryKey
+	(*CreateStudent)(nil),              // 1: student_service_go.CreateStudent
+	(*GetStudent)(nil),                 // 2: student_service_go.GetStudent
+	(*UpdateStudent)(nil),              // 3: student_service_go.UpdateStudent
+	(*GetListStudentRequest)(nil),      // 4: student_service_go.GetListStudentRequest
+	(*GetListStudentResponse)(nil),     // 5: student_service_go.GetListStudentResponse
+	(*StudentLoginRequest)(nil),        // 6: student_service_go.StudentLoginRequest
+	(*StudentLoginResponse)(nil),       // 7: student_service_go.StudentLoginResponse
+	(*StudentRegisterRequest)(nil),     // 8: student_service_go.StudentRegisterRequest
+	(*StudentRegisterConfRequest)(nil), // 9: student_service_go.StudentRegisterConfRequest
+	(*ChangePassword)(nil),             // 10: student_service_go.ChangePassword
+	(*GetStudentByLogin)(nil),          // 11: student_service_go.GetStudentByLogin
+	(*empty.Empty)(nil),                // 12: google.protobuf.Empty
 }
 var file_students_proto_depIdxs = []int32{
-	2, // 0: student_service_go.GetListStudentResponse.Students:type_name -> student_service_go.GetStudent
-	1, // 1: student_service_go.StudentService.Create:input_type -> student_service_go.CreateStudent
-	0, // 2: student_service_go.StudentService.GetByID:input_type -> student_service_go.StudentPrimaryKey
-	4, // 3: student_service_go.StudentService.GetList:input_type -> student_service_go.GetListStudentRequest
-	3, // 4: student_service_go.StudentService.Update:input_type -> student_service_go.UpdateStudent
-	0, // 5: student_service_go.StudentService.Delete:input_type -> student_service_go.StudentPrimaryKey
-	2, // 6: student_service_go.StudentService.Create:output_type -> student_service_go.GetStudent
-	2, // 7: student_service_go.StudentService.GetByID:output_type -> student_service_go.GetStudent
-	5, // 8: student_service_go.StudentService.GetList:output_type -> student_service_go.GetListStudentResponse
-	2, // 9: student_service_go.StudentService.Update:output_type -> student_service_go.GetStudent
-	6, // 10: student_service_go.StudentService.Delete:output_type -> google.protobuf.Empty
-	6, // [6:11] is the sub-list for method output_type
-	1, // [1:6] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	2,  // 0: student_service_go.GetListStudentResponse.Students:type_name -> student_service_go.GetStudent
+	1,  // 1: student_service_go.StudentRegisterConfRequest.Student:type_name -> student_service_go.CreateStudent
+	1,  // 2: student_service_go.StudentService.Create:input_type -> student_service_go.CreateStudent
+	0,  // 3: student_service_go.StudentService.GetByID:input_type -> student_service_go.StudentPrimaryKey
+	4,  // 4: student_service_go.StudentService.GetList:input_type -> student_service_go.GetListStudentRequest
+	3,  // 5: student_service_go.StudentService.Update:input_type -> student_service_go.UpdateStudent
+	0,  // 6: student_service_go.StudentService.Delete:input_type -> student_service_go.StudentPrimaryKey
+	2,  // 7: student_service_go.StudentService.Create:output_type -> student_service_go.GetStudent
+	2,  // 8: student_service_go.StudentService.GetByID:output_type -> student_service_go.GetStudent
+	5,  // 9: student_service_go.StudentService.GetList:output_type -> student_service_go.GetListStudentResponse
+	2,  // 10: student_service_go.StudentService.Update:output_type -> student_service_go.GetStudent
+	12, // 11: student_service_go.StudentService.Delete:output_type -> google.protobuf.Empty
+	7,  // [7:12] is the sub-list for method output_type
+	2,  // [2:7] is the sub-list for method input_type
+	2,  // [2:2] is the sub-list for extension type_name
+	2,  // [2:2] is the sub-list for extension extendee
+	0,  // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_students_proto_init() }
@@ -799,6 +1317,78 @@ func file_students_proto_init() {
 				return nil
 			}
 		}
+		file_students_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*StudentLoginRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_students_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*StudentLoginResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_students_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*StudentRegisterRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_students_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*StudentRegisterConfRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_students_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ChangePassword); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_students_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetStudentByLogin); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -806,7 +1396,7 @@ func file_students_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_students_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

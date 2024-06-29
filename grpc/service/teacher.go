@@ -2,8 +2,15 @@ package service
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"go_user_service/config"
 	"go_user_service/genproto/teacher_service"
+	"go_user_service/pkg"
+	"go_user_service/pkg/hash"
+	"go_user_service/pkg/jwt"
+	"go_user_service/pkg/smtp"
+	"time"
 
 	"go_user_service/grpc/client"
 	"go_user_service/storage"
@@ -17,14 +24,16 @@ type TeacherService struct {
 	log      logger.LoggerI
 	strg     storage.StorageI
 	services client.ServiceManagerI
+	redis    storage.IRedisStorage
 }
 
-func NewTeacherService(cfg config.Config, log logger.LoggerI, strg storage.StorageI, srvs client.ServiceManagerI) *TeacherService {
+func NewTeacherService(cfg config.Config, log logger.LoggerI, strg storage.StorageI, srvs client.ServiceManagerI, redis storage.IRedisStorage) *TeacherService {
 	return &TeacherService{
 		cfg:      cfg,
 		log:      log,
 		strg:     strg,
 		services: srvs,
+		redis:    redis,
 	}
 }
 
@@ -88,4 +97,90 @@ func (f *TeacherService) Delete(ctx context.Context, req *teacher_service.Teache
 	}
 
 	return &emptypb.Empty{}, nil
+}
+
+func (a *TeacherService) TeacherLogin(ctx context.Context, loginRequest *teacher_service.TeacherLoginRequest) (*teacher_service.TeacherLoginResponse, error) {
+	fmt.Println(" loginRequest.Login: ", loginRequest.UserLogin)
+	teacher, err := a.strg.Teacher().GetByLogin(ctx, loginRequest.UserLogin)
+	if err != nil {
+		a.log.Error("error while getting teacher credentials by login", logger.Error(err))
+		return &teacher_service.TeacherLoginResponse{}, err
+	}
+
+	if err = hash.CompareHashAndPassword(teacher.UserPassword, loginRequest.UserPassword); err != nil {
+		a.log.Error("error while comparing password", logger.Error(err))
+		return &teacher_service.TeacherLoginResponse{}, err
+	}
+
+	m := make(map[interface{}]interface{})
+
+	m["user_id"] = teacher.Id
+	m["user_role"] = config.TEACHER_ROLE
+
+	accessToken, refreshToken, err := jwt.GenJWT(m)
+	if err != nil {
+		a.log.Error("error while generating tokens for teacher login", logger.Error(err))
+		return &teacher_service.TeacherLoginResponse{}, err
+	}
+
+	return &teacher_service.TeacherLoginResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}, nil
+}
+
+func (a *TeacherService) TeacherRegister(ctx context.Context, loginRequest *teacher_service.TeacherRegisterRequest) (*emptypb.Empty, error) {
+	fmt.Println(" loginRequest.Login: ", loginRequest.Mail)
+
+	otpCode := pkg.GenerateOTP()
+
+	msg := fmt.Sprintf("Your otp code is: %v, for registering RENT_CAR. Don't give it to anyone", otpCode)
+
+	err := a.redis.SetX(ctx, loginRequest.Mail, otpCode, time.Minute*2)
+	if err != nil {
+		a.log.Error("error while setting otpCode to redis teacher register", logger.Error(err))
+		return &emptypb.Empty{}, err
+	}
+
+	err = smtp.SendMail(loginRequest.Mail, msg)
+	if err != nil {
+		a.log.Error("error while sending otp code to teacher register", logger.Error(err))
+		return &emptypb.Empty{}, err
+	}
+	return &emptypb.Empty{}, nil
+}
+
+func (a *TeacherService) TeacherRegisterConfirm(ctx context.Context, req *teacher_service.TeacherRegisterConfRequest) (*teacher_service.TeacherLoginResponse, error) {
+	resp := &teacher_service.TeacherLoginResponse{}
+
+	otp, err := a.redis.Get(ctx, req.Mail)
+	if err != nil {
+		a.log.Error("error while getting otp code for teacher register confirm", logger.Error(err))
+		return resp, err
+	}
+	if req.Otp != otp {
+		a.log.Error("incorrect otp code for teacher register confirm", logger.Error(err))
+		return resp, errors.New("incorrect otp code")
+	}
+	req.Teacher[0].Email = req.Mail
+
+	id, err := a.strg.Teacher().Create(ctx, req.Teacher[0])
+	if err != nil {
+		a.log.Error("error while creating teacher", logger.Error(err))
+		return resp, err
+	}
+	var m = make(map[interface{}]interface{})
+
+	m["user_id"] = id
+	m["user_role"] = config.TEACHER_ROLE
+
+	accessToken, refreshToken, err := jwt.GenJWT(m)
+	if err != nil {
+		a.log.Error("error while generating tokens for teacher register confirm", logger.Error(err))
+		return resp, err
+	}
+	resp.AccessToken = accessToken
+	resp.RefreshToken = refreshToken
+
+	return resp, nil
 }

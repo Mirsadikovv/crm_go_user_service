@@ -6,6 +6,7 @@ import (
 	"go_user_service/grpc"
 	"go_user_service/grpc/client"
 	"go_user_service/storage/postgres"
+	"go_user_service/storage/redis"
 	"net"
 
 	"github.com/saidamir98/udevs_pkg/logger"
@@ -26,9 +27,11 @@ func main() {
 	}
 
 	log := logger.NewLogger(cfg.ServiceName, loggerLevel)
-	defer logger.Cleanup(log)
 
-	pgStore, err := postgres.NewPostgres(context.Background(), cfg)
+	defer logger.Cleanup(log)
+	newRedis := redis.New(cfg)
+
+	pgStore, err := postgres.NewPostgres(context.Background(), cfg, newRedis)
 	if err != nil {
 		log.Panic("postgres.NewPostgres", logger.Error(err))
 	}
@@ -39,7 +42,7 @@ func main() {
 		log.Panic("client.NewGrpcClients", logger.Error(err))
 	}
 
-	grpcServer := grpc.SetUpServer(cfg, log, pgStore, svcs)
+	grpcServer := grpc.SetUpServer(cfg, log, pgStore, svcs, newRedis)
 
 	lis, err := net.Listen("tcp", cfg.ContentGRPCPort)
 	if err != nil {

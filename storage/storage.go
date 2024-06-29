@@ -12,6 +12,7 @@ import (
 	"go_user_service/genproto/superadmin_service"
 	"go_user_service/genproto/support_teacher_service"
 	"go_user_service/genproto/teacher_service"
+	"time"
 
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -28,6 +29,7 @@ type StorageI interface {
 	Student() StudentRepoI
 	Event() EventRepoI
 	EventRegistrate() EventRegistrateRepoI
+	Redis() IRedisStorage
 }
 
 type TeacherRepoI interface {
@@ -36,6 +38,9 @@ type TeacherRepoI interface {
 	GetAll(context.Context, *teacher_service.GetListTeacherRequest) (*teacher_service.GetListTeacherResponse, error)
 	GetById(context.Context, *teacher_service.TeacherPrimaryKey) (*teacher_service.GetTeacher, error)
 	Delete(context.Context, *teacher_service.TeacherPrimaryKey) (emptypb.Empty, error)
+	ChangePassword(context.Context, *teacher_service.ChangePassword) (string, error)
+	GetByLogin(context.Context, string) (*teacher_service.GetTeacherByLogin, error)
+	GetPassword(ctx context.Context, login string) (string, error)
 }
 
 type SupportTeacherRepoI interface {
@@ -106,4 +111,10 @@ type EventRegistrateRepoI interface {
 	Update(context.Context, *event_registrate_service.UpdateEventRegistrate) (*event_registrate_service.GetEventRegistrate, error)
 	GetById(context.Context, *event_registrate_service.EventRegistratePrimaryKey) (*event_registrate_service.GetEventRegistrate, error)
 	Delete(context.Context, *event_registrate_service.EventRegistratePrimaryKey) (emptypb.Empty, error)
+}
+
+type IRedisStorage interface {
+	SetX(ctx context.Context, key string, value interface{}, duration time.Duration) error
+	Get(ctx context.Context, key string) (interface{}, error)
+	Del(ctx context.Context, key string) error
 }
