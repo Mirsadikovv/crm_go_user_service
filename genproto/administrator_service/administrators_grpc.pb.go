@@ -28,6 +28,10 @@ type AdministratorServiceClient interface {
 	GetList(ctx context.Context, in *GetListAdministratorRequest, opts ...grpc.CallOption) (*GetListAdministratorResponse, error)
 	Update(ctx context.Context, in *UpdateAdministrator, opts ...grpc.CallOption) (*GetAdministrator, error)
 	Delete(ctx context.Context, in *AdministratorPrimaryKey, opts ...grpc.CallOption) (*empty.Empty, error)
+	Login(ctx context.Context, in *AdministratorLoginRequest, opts ...grpc.CallOption) (*AdministratorLoginResponse, error)
+	Register(ctx context.Context, in *AdministratorRegisterRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	RegisterConfirm(ctx context.Context, in *AdministratorRegisterConfRequest, opts ...grpc.CallOption) (*AdministratorLoginResponse, error)
+	ChangePassword(ctx context.Context, in *AdministratorChangePassword, opts ...grpc.CallOption) (*AdministratorChangePasswordResp, error)
 }
 
 type administratorServiceClient struct {
@@ -83,6 +87,42 @@ func (c *administratorServiceClient) Delete(ctx context.Context, in *Administrat
 	return out, nil
 }
 
+func (c *administratorServiceClient) Login(ctx context.Context, in *AdministratorLoginRequest, opts ...grpc.CallOption) (*AdministratorLoginResponse, error) {
+	out := new(AdministratorLoginResponse)
+	err := c.cc.Invoke(ctx, "/administrator_service_go.AdministratorService/Login", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *administratorServiceClient) Register(ctx context.Context, in *AdministratorRegisterRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/administrator_service_go.AdministratorService/Register", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *administratorServiceClient) RegisterConfirm(ctx context.Context, in *AdministratorRegisterConfRequest, opts ...grpc.CallOption) (*AdministratorLoginResponse, error) {
+	out := new(AdministratorLoginResponse)
+	err := c.cc.Invoke(ctx, "/administrator_service_go.AdministratorService/RegisterConfirm", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *administratorServiceClient) ChangePassword(ctx context.Context, in *AdministratorChangePassword, opts ...grpc.CallOption) (*AdministratorChangePasswordResp, error) {
+	out := new(AdministratorChangePasswordResp)
+	err := c.cc.Invoke(ctx, "/administrator_service_go.AdministratorService/ChangePassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdministratorServiceServer is the server API for AdministratorService service.
 // All implementations should embed UnimplementedAdministratorServiceServer
 // for forward compatibility
@@ -92,6 +132,10 @@ type AdministratorServiceServer interface {
 	GetList(context.Context, *GetListAdministratorRequest) (*GetListAdministratorResponse, error)
 	Update(context.Context, *UpdateAdministrator) (*GetAdministrator, error)
 	Delete(context.Context, *AdministratorPrimaryKey) (*empty.Empty, error)
+	Login(context.Context, *AdministratorLoginRequest) (*AdministratorLoginResponse, error)
+	Register(context.Context, *AdministratorRegisterRequest) (*empty.Empty, error)
+	RegisterConfirm(context.Context, *AdministratorRegisterConfRequest) (*AdministratorLoginResponse, error)
+	ChangePassword(context.Context, *AdministratorChangePassword) (*AdministratorChangePasswordResp, error)
 }
 
 // UnimplementedAdministratorServiceServer should be embedded to have forward compatible implementations.
@@ -112,6 +156,18 @@ func (UnimplementedAdministratorServiceServer) Update(context.Context, *UpdateAd
 }
 func (UnimplementedAdministratorServiceServer) Delete(context.Context, *AdministratorPrimaryKey) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedAdministratorServiceServer) Login(context.Context, *AdministratorLoginRequest) (*AdministratorLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedAdministratorServiceServer) Register(context.Context, *AdministratorRegisterRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedAdministratorServiceServer) RegisterConfirm(context.Context, *AdministratorRegisterConfRequest) (*AdministratorLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterConfirm not implemented")
+}
+func (UnimplementedAdministratorServiceServer) ChangePassword(context.Context, *AdministratorChangePassword) (*AdministratorChangePasswordResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
 }
 
 // UnsafeAdministratorServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -215,6 +271,78 @@ func _AdministratorService_Delete_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AdministratorService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdministratorLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdministratorServiceServer).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/administrator_service_go.AdministratorService/Login",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdministratorServiceServer).Login(ctx, req.(*AdministratorLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdministratorService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdministratorRegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdministratorServiceServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/administrator_service_go.AdministratorService/Register",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdministratorServiceServer).Register(ctx, req.(*AdministratorRegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdministratorService_RegisterConfirm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdministratorRegisterConfRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdministratorServiceServer).RegisterConfirm(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/administrator_service_go.AdministratorService/RegisterConfirm",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdministratorServiceServer).RegisterConfirm(ctx, req.(*AdministratorRegisterConfRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdministratorService_ChangePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdministratorChangePassword)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdministratorServiceServer).ChangePassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/administrator_service_go.AdministratorService/ChangePassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdministratorServiceServer).ChangePassword(ctx, req.(*AdministratorChangePassword))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AdministratorService_ServiceDesc is the grpc.ServiceDesc for AdministratorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -241,6 +369,22 @@ var AdministratorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _AdministratorService_Delete_Handler,
+		},
+		{
+			MethodName: "Login",
+			Handler:    _AdministratorService_Login_Handler,
+		},
+		{
+			MethodName: "Register",
+			Handler:    _AdministratorService_Register_Handler,
+		},
+		{
+			MethodName: "RegisterConfirm",
+			Handler:    _AdministratorService_RegisterConfirm_Handler,
+		},
+		{
+			MethodName: "ChangePassword",
+			Handler:    _AdministratorService_ChangePassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

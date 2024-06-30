@@ -38,3 +38,22 @@ func ValidateBitrthday(birthday string, age int) error {
 	}
 	return nil
 }
+
+func CheckDeadline(timestamp string) (float64, error) {
+	layout := time.RFC3339
+
+	date, err := time.Parse(layout, timestamp)
+	if err != nil {
+		return -1, errors.New("wrong timestamp format")
+	}
+
+	now := time.Now().UTC()
+
+	hoursUntil := date.Sub(now).Hours()
+
+	if hoursUntil < 0 {
+		return 0, nil
+	}
+
+	return hoursUntil, nil
+}

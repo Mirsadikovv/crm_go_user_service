@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	br "go_user_service/genproto/group_service"
+	gr "go_user_service/genproto/group_service"
 	"go_user_service/pkg"
 	"go_user_service/storage"
 	"log"
@@ -25,7 +25,7 @@ func NewGroupRepo(db *pgxpool.Pool) storage.GroupRepoI {
 	}
 }
 
-func (c *groupRepo) Create(ctx context.Context, req *br.CreateGroup) (*br.GetGroup, error) {
+func (c *groupRepo) Create(ctx context.Context, req *gr.CreateGroup) (*gr.GetGroup, error) {
 	id := uuid.NewString()
 
 	comtag, err := c.db.Exec(ctx, `
@@ -54,7 +54,7 @@ func (c *groupRepo) Create(ctx context.Context, req *br.CreateGroup) (*br.GetGro
 		return nil, err
 	}
 
-	group, err := c.GetById(ctx, &br.GroupPrimaryKey{Id: id})
+	group, err := c.GetById(ctx, &gr.GroupPrimaryKey{Id: id})
 	if err != nil {
 		log.Println("error while getting group by id")
 		return nil, err
@@ -62,7 +62,7 @@ func (c *groupRepo) Create(ctx context.Context, req *br.CreateGroup) (*br.GetGro
 	return group, nil
 }
 
-func (c *groupRepo) Update(ctx context.Context, req *br.UpdateGroup) (*br.GetGroup, error) {
+func (c *groupRepo) Update(ctx context.Context, req *gr.UpdateGroup) (*gr.GetGroup, error) {
 
 	_, err := c.db.Exec(ctx, `
 		UPDATE groups SET
@@ -90,7 +90,7 @@ func (c *groupRepo) Update(ctx context.Context, req *br.UpdateGroup) (*br.GetGro
 		return nil, err
 	}
 
-	group, err := c.GetById(ctx, &br.GroupPrimaryKey{Id: req.Id})
+	group, err := c.GetById(ctx, &gr.GroupPrimaryKey{Id: req.Id})
 	if err != nil {
 		log.Println("error while getting group by id")
 		return nil, err
@@ -98,8 +98,8 @@ func (c *groupRepo) Update(ctx context.Context, req *br.UpdateGroup) (*br.GetGro
 	return group, nil
 }
 
-func (c *groupRepo) GetAll(ctx context.Context, req *br.GetListGroupRequest) (*br.GetListGroupResponse, error) {
-	groups := br.GetListGroupResponse{}
+func (c *groupRepo) GetAll(ctx context.Context, req *gr.GetListGroupRequest) (*gr.GetListGroupResponse, error) {
+	groups := gr.GetListGroupResponse{}
 	var (
 		created_at  sql.NullString
 		updated_at  sql.NullString
@@ -135,7 +135,7 @@ func (c *groupRepo) GetAll(ctx context.Context, req *br.GetListGroupRequest) (*b
 	defer rows.Close()
 	for rows.Next() {
 		var (
-			group br.GetGroup
+			group gr.GetGroup
 		)
 		if err = rows.Scan(
 			&group.Id,
@@ -167,9 +167,9 @@ func (c *groupRepo) GetAll(ctx context.Context, req *br.GetListGroupRequest) (*b
 	return &groups, nil
 }
 
-func (c *groupRepo) GetById(ctx context.Context, id *br.GroupPrimaryKey) (*br.GetGroup, error) {
+func (c *groupRepo) GetById(ctx context.Context, id *gr.GroupPrimaryKey) (*gr.GetGroup, error) {
 	var (
-		group       br.GetGroup
+		group       gr.GetGroup
 		created_at  sql.NullString
 		updated_at  sql.NullString
 		started_at  sql.NullString
@@ -213,7 +213,7 @@ func (c *groupRepo) GetById(ctx context.Context, id *br.GroupPrimaryKey) (*br.Ge
 	return &group, nil
 }
 
-func (c *groupRepo) Delete(ctx context.Context, id *br.GroupPrimaryKey) (emptypb.Empty, error) {
+func (c *groupRepo) Delete(ctx context.Context, id *gr.GroupPrimaryKey) (emptypb.Empty, error) {
 
 	_, err := c.db.Exec(ctx, `
 		UPDATE groups SET
@@ -226,4 +226,24 @@ func (c *groupRepo) Delete(ctx context.Context, id *br.GroupPrimaryKey) (emptypb
 		return emptypb.Empty{}, err
 	}
 	return emptypb.Empty{}, nil
+}
+
+func (c *groupRepo) Check(ctx context.Context, id *gr.GroupPrimaryKey) (*gr.CheckGroupResp, error) {
+	query := `SELECT EXISTS (
+                SELECT 1
+                FROM groups
+                WHERE id = $1 AND deleted_at IS NULL
+            )`
+
+	var exists bool
+	err := c.db.QueryRow(ctx, query, id.Id).Scan(&exists)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &gr.CheckGroupResp{
+		Check: exists,
+	}
+
+	return resp, nil
 }

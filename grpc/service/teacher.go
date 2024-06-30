@@ -99,7 +99,7 @@ func (f *TeacherService) Delete(ctx context.Context, req *teacher_service.Teache
 	return &emptypb.Empty{}, nil
 }
 
-func (a *TeacherService) TeacherLogin(ctx context.Context, loginRequest *teacher_service.TeacherLoginRequest) (*teacher_service.TeacherLoginResponse, error) {
+func (a *TeacherService) Login(ctx context.Context, loginRequest *teacher_service.TeacherLoginRequest) (*teacher_service.TeacherLoginResponse, error) {
 	fmt.Println(" loginRequest.Login: ", loginRequest.UserLogin)
 	teacher, err := a.strg.Teacher().GetByLogin(ctx, loginRequest.UserLogin)
 	if err != nil {
@@ -129,7 +129,7 @@ func (a *TeacherService) TeacherLogin(ctx context.Context, loginRequest *teacher
 	}, nil
 }
 
-func (a *TeacherService) TeacherRegister(ctx context.Context, loginRequest *teacher_service.TeacherRegisterRequest) (*emptypb.Empty, error) {
+func (a *TeacherService) Register(ctx context.Context, loginRequest *teacher_service.TeacherRegisterRequest) (*emptypb.Empty, error) {
 	fmt.Println(" loginRequest.Login: ", loginRequest.Mail)
 
 	otpCode := pkg.GenerateOTP()
@@ -150,7 +150,7 @@ func (a *TeacherService) TeacherRegister(ctx context.Context, loginRequest *teac
 	return &emptypb.Empty{}, nil
 }
 
-func (a *TeacherService) TeacherRegisterConfirm(ctx context.Context, req *teacher_service.TeacherRegisterConfRequest) (*teacher_service.TeacherLoginResponse, error) {
+func (a *TeacherService) RegisterConfirm(ctx context.Context, req *teacher_service.TeacherRegisterConfRequest) (*teacher_service.TeacherLoginResponse, error) {
 	resp := &teacher_service.TeacherLoginResponse{}
 
 	otp, err := a.redis.Get(ctx, req.Mail)
@@ -181,6 +181,18 @@ func (a *TeacherService) TeacherRegisterConfirm(ctx context.Context, req *teache
 	}
 	resp.AccessToken = accessToken
 	resp.RefreshToken = refreshToken
+
+	return resp, nil
+}
+
+func (f *TeacherService) ChangePassword(ctx context.Context, pass *teacher_service.TeacherChangePassword) (*teacher_service.TeacherChangePasswordResp, error) {
+	f.log.Info("---ChangePassword--->>>", logger.Any("req", pass))
+
+	resp, err := f.strg.Teacher().ChangePassword(ctx, pass)
+	if err != nil {
+		f.log.Error("---ChangePassword--->>>", logger.Error(err))
+		return nil, err
+	}
 
 	return resp, nil
 }

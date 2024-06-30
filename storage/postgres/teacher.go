@@ -303,8 +303,9 @@ func (c *teacherRepo) Delete(ctx context.Context, id *teacher_service.TeacherPri
 
 /////////////////////////////////////////////////////33333333333333333333333333333333333333333333333333333333333333
 
-func (c *teacherRepo) ChangePassword(ctx context.Context, pass *teacher_service.ChangePassword) (string, error) {
+func (c *teacherRepo) ChangePassword(ctx context.Context, pass *teacher_service.TeacherChangePassword) (*teacher_service.TeacherChangePasswordResp, error) {
 	var hashedPass string
+	var resp teacher_service.TeacherChangePasswordResp
 
 	query := `SELECT user_password
 	FROM teachers
@@ -316,21 +317,21 @@ func (c *teacherRepo) ChangePassword(ctx context.Context, pass *teacher_service.
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return "", errors.New("incorrect login")
+			return nil, errors.New("incorrect login")
 		}
 		log.Println("failed to get teacher password from database", logger.Error(err))
-		return "", err
+		return nil, err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(hashedPass), []byte(pass.OldPassword))
 	if err != nil {
-		return "", errors.New("password mismatch")
+		return nil, errors.New("password mismatch")
 	}
 
 	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(pass.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
 		log.Println("failed to generate teacher new password", logger.Error(err))
-		return "", err
+		return nil, err
 	}
 
 	query = `UPDATE teachers SET 
@@ -341,10 +342,10 @@ func (c *teacherRepo) ChangePassword(ctx context.Context, pass *teacher_service.
 	_, err = c.db.Exec(ctx, query, newHashedPassword, pass.UserLogin)
 	if err != nil {
 		log.Println("failed to change teacher password in database", logger.Error(err))
-		return "", err
+		return &resp, err
 	}
-
-	return "Password changed successfully", nil
+	resp.Comment = "Password changed successfully"
+	return &resp, nil
 }
 
 func (c *teacherRepo) GetByLogin(ctx context.Context, login string) (*teacher_service.GetTeacherByLogin, error) {

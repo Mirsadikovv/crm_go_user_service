@@ -28,6 +28,11 @@ type StudentServiceClient interface {
 	GetList(ctx context.Context, in *GetListStudentRequest, opts ...grpc.CallOption) (*GetListStudentResponse, error)
 	Update(ctx context.Context, in *UpdateStudent, opts ...grpc.CallOption) (*GetStudent, error)
 	Delete(ctx context.Context, in *StudentPrimaryKey, opts ...grpc.CallOption) (*empty.Empty, error)
+	Check(ctx context.Context, in *StudentPrimaryKey, opts ...grpc.CallOption) (*CheckStudentResp, error)
+	Login(ctx context.Context, in *StudentLoginRequest, opts ...grpc.CallOption) (*StudentLoginResponse, error)
+	Register(ctx context.Context, in *StudentRegisterRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	RegisterConfirm(ctx context.Context, in *StudentRegisterConfRequest, opts ...grpc.CallOption) (*StudentLoginResponse, error)
+	ChangePassword(ctx context.Context, in *StudentChangePassword, opts ...grpc.CallOption) (*StudentChangePasswordResp, error)
 }
 
 type studentServiceClient struct {
@@ -83,6 +88,51 @@ func (c *studentServiceClient) Delete(ctx context.Context, in *StudentPrimaryKey
 	return out, nil
 }
 
+func (c *studentServiceClient) Check(ctx context.Context, in *StudentPrimaryKey, opts ...grpc.CallOption) (*CheckStudentResp, error) {
+	out := new(CheckStudentResp)
+	err := c.cc.Invoke(ctx, "/student_service_go.StudentService/Check", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *studentServiceClient) Login(ctx context.Context, in *StudentLoginRequest, opts ...grpc.CallOption) (*StudentLoginResponse, error) {
+	out := new(StudentLoginResponse)
+	err := c.cc.Invoke(ctx, "/student_service_go.StudentService/Login", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *studentServiceClient) Register(ctx context.Context, in *StudentRegisterRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/student_service_go.StudentService/Register", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *studentServiceClient) RegisterConfirm(ctx context.Context, in *StudentRegisterConfRequest, opts ...grpc.CallOption) (*StudentLoginResponse, error) {
+	out := new(StudentLoginResponse)
+	err := c.cc.Invoke(ctx, "/student_service_go.StudentService/RegisterConfirm", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *studentServiceClient) ChangePassword(ctx context.Context, in *StudentChangePassword, opts ...grpc.CallOption) (*StudentChangePasswordResp, error) {
+	out := new(StudentChangePasswordResp)
+	err := c.cc.Invoke(ctx, "/student_service_go.StudentService/ChangePassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StudentServiceServer is the server API for StudentService service.
 // All implementations should embed UnimplementedStudentServiceServer
 // for forward compatibility
@@ -92,6 +142,11 @@ type StudentServiceServer interface {
 	GetList(context.Context, *GetListStudentRequest) (*GetListStudentResponse, error)
 	Update(context.Context, *UpdateStudent) (*GetStudent, error)
 	Delete(context.Context, *StudentPrimaryKey) (*empty.Empty, error)
+	Check(context.Context, *StudentPrimaryKey) (*CheckStudentResp, error)
+	Login(context.Context, *StudentLoginRequest) (*StudentLoginResponse, error)
+	Register(context.Context, *StudentRegisterRequest) (*empty.Empty, error)
+	RegisterConfirm(context.Context, *StudentRegisterConfRequest) (*StudentLoginResponse, error)
+	ChangePassword(context.Context, *StudentChangePassword) (*StudentChangePasswordResp, error)
 }
 
 // UnimplementedStudentServiceServer should be embedded to have forward compatible implementations.
@@ -112,6 +167,21 @@ func (UnimplementedStudentServiceServer) Update(context.Context, *UpdateStudent)
 }
 func (UnimplementedStudentServiceServer) Delete(context.Context, *StudentPrimaryKey) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedStudentServiceServer) Check(context.Context, *StudentPrimaryKey) (*CheckStudentResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Check not implemented")
+}
+func (UnimplementedStudentServiceServer) Login(context.Context, *StudentLoginRequest) (*StudentLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedStudentServiceServer) Register(context.Context, *StudentRegisterRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedStudentServiceServer) RegisterConfirm(context.Context, *StudentRegisterConfRequest) (*StudentLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterConfirm not implemented")
+}
+func (UnimplementedStudentServiceServer) ChangePassword(context.Context, *StudentChangePassword) (*StudentChangePasswordResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
 }
 
 // UnsafeStudentServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -215,6 +285,96 @@ func _StudentService_Delete_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StudentService_Check_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StudentPrimaryKey)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StudentServiceServer).Check(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/student_service_go.StudentService/Check",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StudentServiceServer).Check(ctx, req.(*StudentPrimaryKey))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StudentService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StudentLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StudentServiceServer).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/student_service_go.StudentService/Login",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StudentServiceServer).Login(ctx, req.(*StudentLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StudentService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StudentRegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StudentServiceServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/student_service_go.StudentService/Register",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StudentServiceServer).Register(ctx, req.(*StudentRegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StudentService_RegisterConfirm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StudentRegisterConfRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StudentServiceServer).RegisterConfirm(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/student_service_go.StudentService/RegisterConfirm",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StudentServiceServer).RegisterConfirm(ctx, req.(*StudentRegisterConfRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StudentService_ChangePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StudentChangePassword)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StudentServiceServer).ChangePassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/student_service_go.StudentService/ChangePassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StudentServiceServer).ChangePassword(ctx, req.(*StudentChangePassword))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // StudentService_ServiceDesc is the grpc.ServiceDesc for StudentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -241,6 +401,26 @@ var StudentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _StudentService_Delete_Handler,
+		},
+		{
+			MethodName: "Check",
+			Handler:    _StudentService_Check_Handler,
+		},
+		{
+			MethodName: "Login",
+			Handler:    _StudentService_Login_Handler,
+		},
+		{
+			MethodName: "Register",
+			Handler:    _StudentService_Register_Handler,
+		},
+		{
+			MethodName: "RegisterConfirm",
+			Handler:    _StudentService_RegisterConfirm_Handler,
+		},
+		{
+			MethodName: "ChangePassword",
+			Handler:    _StudentService_ChangePassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

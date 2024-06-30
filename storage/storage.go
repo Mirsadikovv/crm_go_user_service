@@ -38,9 +38,9 @@ type TeacherRepoI interface {
 	GetAll(context.Context, *teacher_service.GetListTeacherRequest) (*teacher_service.GetListTeacherResponse, error)
 	GetById(context.Context, *teacher_service.TeacherPrimaryKey) (*teacher_service.GetTeacher, error)
 	Delete(context.Context, *teacher_service.TeacherPrimaryKey) (emptypb.Empty, error)
-	ChangePassword(context.Context, *teacher_service.ChangePassword) (string, error)
+	ChangePassword(context.Context, *teacher_service.TeacherChangePassword) (*teacher_service.TeacherChangePasswordResp, error)
 	GetByLogin(context.Context, string) (*teacher_service.GetTeacherByLogin, error)
-	GetPassword(ctx context.Context, login string) (string, error)
+	GetPassword(context.Context, string) (string, error)
 }
 
 type SupportTeacherRepoI interface {
@@ -49,6 +49,9 @@ type SupportTeacherRepoI interface {
 	GetAll(context.Context, *support_teacher_service.GetListSupportTeacherRequest) (*support_teacher_service.GetListSupportTeacherResponse, error)
 	GetById(context.Context, *support_teacher_service.SupportTeacherPrimaryKey) (*support_teacher_service.GetSupportTeacher, error)
 	Delete(context.Context, *support_teacher_service.SupportTeacherPrimaryKey) (emptypb.Empty, error)
+	ChangePassword(context.Context, *support_teacher_service.SupportTeacherChangePassword) (*support_teacher_service.SupportTeacherChangePasswordResp, error)
+	GetByLogin(context.Context, string) (*support_teacher_service.GetSupportTeacherByLogin, error)
+	GetPassword(context.Context, string) (string, error)
 }
 
 type BranchRepoI interface {
@@ -65,6 +68,9 @@ type ManagerRepoI interface {
 	GetAll(context.Context, *manager_service.GetListManagerRequest) (*manager_service.GetListManagerResponse, error)
 	GetById(context.Context, *manager_service.ManagerPrimaryKey) (*manager_service.GetManager, error)
 	Delete(context.Context, *manager_service.ManagerPrimaryKey) (emptypb.Empty, error)
+	ChangePassword(context.Context, *manager_service.ManagerChangePassword) (*manager_service.ManagerChangePasswordResp, error)
+	GetByLogin(context.Context, string) (*manager_service.GetManagerByLogin, error)
+	GetPassword(context.Context, string) (string, error)
 }
 
 type AdministratorRepoI interface {
@@ -73,6 +79,9 @@ type AdministratorRepoI interface {
 	GetAll(context.Context, *administrator_service.GetListAdministratorRequest) (*administrator_service.GetListAdministratorResponse, error)
 	GetById(context.Context, *administrator_service.AdministratorPrimaryKey) (*administrator_service.GetAdministrator, error)
 	Delete(context.Context, *administrator_service.AdministratorPrimaryKey) (emptypb.Empty, error)
+	ChangePassword(context.Context, *administrator_service.AdministratorChangePassword) (*administrator_service.AdministratorChangePasswordResp, error)
+	GetByLogin(context.Context, string) (*administrator_service.GetAdministratorByLogin, error)
+	GetPassword(context.Context, string) (string, error)
 }
 
 type SuperadminRepoI interface {
@@ -80,6 +89,9 @@ type SuperadminRepoI interface {
 	Update(context.Context, *superadmin_service.UpdateSuperadmin) (*superadmin_service.GetSuperadmin, error)
 	GetById(context.Context, *superadmin_service.SuperadminPrimaryKey) (*superadmin_service.GetSuperadmin, error)
 	Delete(context.Context, *superadmin_service.SuperadminPrimaryKey) (emptypb.Empty, error)
+	ChangePassword(context.Context, *superadmin_service.SuperadminChangePassword) (*superadmin_service.SuperadminChangePasswordResp, error)
+	GetByLogin(context.Context, string) (*superadmin_service.GetSuperadminByLogin, error)
+	GetPassword(context.Context, string) (string, error)
 }
 
 type GroupRepoI interface {
@@ -88,6 +100,7 @@ type GroupRepoI interface {
 	GetAll(context.Context, *group_service.GetListGroupRequest) (*group_service.GetListGroupResponse, error)
 	GetById(context.Context, *group_service.GroupPrimaryKey) (*group_service.GetGroup, error)
 	Delete(context.Context, *group_service.GroupPrimaryKey) (emptypb.Empty, error)
+	Check(context.Context, *group_service.GroupPrimaryKey) (*group_service.CheckGroupResp, error)
 }
 
 type StudentRepoI interface {
@@ -96,6 +109,10 @@ type StudentRepoI interface {
 	GetAll(context.Context, *student_service.GetListStudentRequest) (*student_service.GetListStudentResponse, error)
 	GetById(context.Context, *student_service.StudentPrimaryKey) (*student_service.GetStudent, error)
 	Delete(context.Context, *student_service.StudentPrimaryKey) (emptypb.Empty, error)
+	Check(context.Context, *student_service.StudentPrimaryKey) (*student_service.CheckStudentResp, error)
+	ChangePassword(context.Context, *student_service.StudentChangePassword) (*student_service.StudentChangePasswordResp, error)
+	GetByLogin(context.Context, string) (*student_service.GetStudentByLogin, error)
+	GetPassword(context.Context, string) (string, error)
 }
 
 type EventRepoI interface {
@@ -114,7 +131,7 @@ type EventRegistrateRepoI interface {
 }
 
 type IRedisStorage interface {
-	SetX(ctx context.Context, key string, value interface{}, duration time.Duration) error
-	Get(ctx context.Context, key string) (interface{}, error)
-	Del(ctx context.Context, key string) error
+	SetX(context.Context, string, interface{}, time.Duration) error
+	Get(context.Context, string) (interface{}, error)
+	Del(context.Context, string) error
 }

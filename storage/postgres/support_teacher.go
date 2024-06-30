@@ -3,13 +3,16 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	stc "go_user_service/genproto/support_teacher_service"
 	"go_user_service/pkg"
 	"go_user_service/pkg/hash"
+	"go_user_service/pkg/logger"
 	"go_user_service/storage"
 	"log"
 
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/google/uuid"
@@ -292,4 +295,135 @@ func (c *support_teacherRepo) Delete(ctx context.Context, id *stc.SupportTeacher
 		return emptypb.Empty{}, err
 	}
 	return emptypb.Empty{}, nil
+}
+
+///////////////////////////////////////////////////
+
+func (c *support_teacherRepo) ChangePassword(ctx context.Context, pass *stc.SupportTeacherChangePassword) (*stc.SupportTeacherChangePasswordResp, error) {
+	var hashedPass string
+	var resp stc.SupportTeacherChangePasswordResp
+	query := `SELECT user_password
+	FROM support_teachers
+	WHERE user_login = $1 AND deleted_at is null`
+
+	err := c.db.QueryRow(ctx, query,
+		pass.UserLogin,
+	).Scan(&hashedPass)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("incorrect login")
+		}
+		log.Println("failed to get support_teacher password from database", logger.Error(err))
+		return nil, err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPass), []byte(pass.OldPassword))
+	if err != nil {
+		return nil, errors.New("password mismatch")
+	}
+
+	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(pass.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		log.Println("failed to generate support_teacher new password", logger.Error(err))
+		return nil, err
+	}
+
+	query = `UPDATE support_teachers SET 
+		user_password = $1, 
+		updated_at = NOW() 
+	WHERE user_login = $2 AND deleted_at is null`
+
+	_, err = c.db.Exec(ctx, query, newHashedPassword, pass.UserLogin)
+	if err != nil {
+		log.Println("failed to change support_teacher password in database", logger.Error(err))
+		return nil, err
+	}
+	resp.Comment = "Password changed successfully"
+	return &resp, nil
+}
+
+func (c *support_teacherRepo) GetByLogin(ctx context.Context, login string) (*stc.GetSupportTeacherByLogin, error) {
+	var (
+		support_teacher stc.GetSupportTeacherByLogin
+		birthday        sql.NullString
+		start_working   sql.NullString
+		end_working     sql.NullString
+		created_at      sql.NullString
+		updated_at      sql.NullString
+	)
+
+	query := `SELECT 
+		id, 
+		branch_id,
+		user_login,
+		birthday, 
+		gender,
+		fullname,
+		email,
+		phone,
+		user_password,
+		salary,
+		ielts_score,
+		ielts_attempts_count,
+		start_working,
+		end_working,
+		created_at, 
+		updated_at
+		FROM support_teachers WHERE user_login = $1 AND deleted_at is null`
+
+	row := c.db.QueryRow(ctx, query, login)
+
+	err := row.Scan(
+		&support_teacher.Id,
+		&support_teacher.BranchId,
+		&support_teacher.UserLogin,
+		&birthday,
+		&support_teacher.Gender,
+		&support_teacher.Fullname,
+		&support_teacher.Email,
+		&support_teacher.Phone,
+		&support_teacher.UserPassword,
+		&support_teacher.Salary,
+		&support_teacher.IeltsScore,
+		&support_teacher.IeltsAttemptsCount,
+		&start_working,
+		&end_working,
+		&created_at,
+		&updated_at,
+	)
+
+	if err != nil {
+		log.Println("failed to scan support_teacher by LOGIN from database", logger.Error(err))
+		return &stc.GetSupportTeacherByLogin{}, err
+	}
+
+	support_teacher.Birthday = pkg.NullStringToString(birthday)
+	support_teacher.StartWorking = pkg.NullStringToString(start_working)
+	support_teacher.EndWorking = pkg.NullStringToString(end_working)
+	support_teacher.CreatedAt = pkg.NullStringToString(created_at)
+	support_teacher.UpdatedAt = pkg.NullStringToString(updated_at)
+
+	return &support_teacher, nil
+}
+
+func (c *support_teacherRepo) GetPassword(ctx context.Context, login string) (string, error) {
+	var hashedPass string
+
+	query := `SELECT user_password
+	FROM support_teachers
+	WHERE user_login = $1 AND deleted_at is null`
+
+	err := c.db.QueryRow(ctx, query, login).Scan(&hashedPass)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", errors.New("incorrect login")
+		} else {
+			log.Println("failed to get support_teacher password from database", logger.Error(err))
+			return "", err
+		}
+	}
+
+	return hashedPass, nil
 }

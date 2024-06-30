@@ -3,13 +3,16 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
-	tc "go_user_service/genproto/administrator_service"
+	adm "go_user_service/genproto/administrator_service"
 	"go_user_service/pkg"
 	"go_user_service/pkg/hash"
+	"go_user_service/pkg/logger"
 	"go_user_service/storage"
 	"log"
 
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/google/uuid"
@@ -36,7 +39,7 @@ func generateAdministratorLogin(db *pgxpool.Pool, ctx context.Context) (string, 
 	return userLogin, nil
 }
 
-func (c *administratorRepo) Create(ctx context.Context, req *tc.CreateAdministrator) (*tc.GetAdministrator, error) {
+func (c *administratorRepo) Create(ctx context.Context, req *adm.CreateAdministrator) (*adm.GetAdministrator, error) {
 	var end_working sql.NullString
 	if req.EndWorking == "" {
 		end_working = sql.NullString{Valid: false}
@@ -86,7 +89,7 @@ func (c *administratorRepo) Create(ctx context.Context, req *tc.CreateAdministra
 		return nil, err
 	}
 
-	administrator, err := c.GetById(ctx, &tc.AdministratorPrimaryKey{Id: id})
+	administrator, err := c.GetById(ctx, &adm.AdministratorPrimaryKey{Id: id})
 	if err != nil {
 		log.Println("error while getting administrator by id")
 		return nil, err
@@ -94,7 +97,7 @@ func (c *administratorRepo) Create(ctx context.Context, req *tc.CreateAdministra
 	return administrator, nil
 }
 
-func (c *administratorRepo) Update(ctx context.Context, req *tc.UpdateAdministrator) (*tc.GetAdministrator, error) {
+func (c *administratorRepo) Update(ctx context.Context, req *adm.UpdateAdministrator) (*adm.GetAdministrator, error) {
 	var end_working sql.NullString
 	if req.EndWorking == "" {
 		end_working = sql.NullString{Valid: false}
@@ -130,7 +133,7 @@ func (c *administratorRepo) Update(ctx context.Context, req *tc.UpdateAdministra
 		return nil, err
 	}
 
-	administrator, err := c.GetById(ctx, &tc.AdministratorPrimaryKey{Id: req.Id})
+	administrator, err := c.GetById(ctx, &adm.AdministratorPrimaryKey{Id: req.Id})
 	if err != nil {
 		log.Println("error while getting administrator by id")
 		return nil, err
@@ -138,8 +141,8 @@ func (c *administratorRepo) Update(ctx context.Context, req *tc.UpdateAdministra
 	return administrator, nil
 }
 
-func (c *administratorRepo) GetAll(ctx context.Context, req *tc.GetListAdministratorRequest) (*tc.GetListAdministratorResponse, error) {
-	administrators := tc.GetListAdministratorResponse{}
+func (c *administratorRepo) GetAll(ctx context.Context, req *adm.GetListAdministratorRequest) (*adm.GetListAdministratorResponse, error) {
+	administrators := adm.GetListAdministratorResponse{}
 	var (
 		created_at    sql.NullString
 		updated_at    sql.NullString
@@ -178,7 +181,7 @@ func (c *administratorRepo) GetAll(ctx context.Context, req *tc.GetListAdministr
 	defer rows.Close()
 	for rows.Next() {
 		var (
-			administrator tc.GetAdministrator
+			administrator adm.GetAdministrator
 		)
 		if err = rows.Scan(
 			&administrator.Id,
@@ -213,9 +216,9 @@ func (c *administratorRepo) GetAll(ctx context.Context, req *tc.GetListAdministr
 	return &administrators, nil
 }
 
-func (c *administratorRepo) GetById(ctx context.Context, id *tc.AdministratorPrimaryKey) (*tc.GetAdministrator, error) {
+func (c *administratorRepo) GetById(ctx context.Context, id *adm.AdministratorPrimaryKey) (*adm.GetAdministrator, error) {
 	var (
-		administrator tc.GetAdministrator
+		administrator adm.GetAdministrator
 		created_at    sql.NullString
 		updated_at    sql.NullString
 		start_working sql.NullString
@@ -263,7 +266,7 @@ func (c *administratorRepo) GetById(ctx context.Context, id *tc.AdministratorPri
 	return &administrator, nil
 }
 
-func (c *administratorRepo) Delete(ctx context.Context, id *tc.AdministratorPrimaryKey) (emptypb.Empty, error) {
+func (c *administratorRepo) Delete(ctx context.Context, id *adm.AdministratorPrimaryKey) (emptypb.Empty, error) {
 
 	_, err := c.db.Exec(ctx, `
 		UPDATE administrators SET
@@ -276,4 +279,131 @@ func (c *administratorRepo) Delete(ctx context.Context, id *tc.AdministratorPrim
 		return emptypb.Empty{}, err
 	}
 	return emptypb.Empty{}, nil
+}
+
+///////////////////////////////////////////
+
+func (c *administratorRepo) ChangePassword(ctx context.Context, pass *adm.AdministratorChangePassword) (*adm.AdministratorChangePasswordResp, error) {
+	var hashedPass string
+	var resp adm.AdministratorChangePasswordResp
+	query := `SELECT user_password
+	FROM administrators
+	WHERE user_login = $1 AND deleted_at is null`
+
+	err := c.db.QueryRow(ctx, query,
+		pass.UserLogin,
+	).Scan(&hashedPass)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("incorrect login")
+		}
+		log.Println("failed to get administrator password from database", logger.Error(err))
+		return nil, err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPass), []byte(pass.OldPassword))
+	if err != nil {
+		return nil, errors.New("password mismatch")
+	}
+
+	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(pass.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		log.Println("failed to generate administrator new password", logger.Error(err))
+		return nil, err
+	}
+
+	query = `UPDATE administrators SET 
+		user_password = $1, 
+		updated_at = NOW() 
+	WHERE user_login = $2 AND deleted_at is null`
+
+	_, err = c.db.Exec(ctx, query, newHashedPassword, pass.UserLogin)
+	if err != nil {
+		log.Println("failed to change administrator password in database", logger.Error(err))
+		return nil, err
+	}
+	resp.Comment = "Password changed successfully"
+	return &resp, nil
+}
+
+func (c *administratorRepo) GetByLogin(ctx context.Context, login string) (*adm.GetAdministratorByLogin, error) {
+	var (
+		administrator adm.GetAdministratorByLogin
+		birthday      sql.NullString
+		start_working sql.NullString
+		end_working   sql.NullString
+		created_at    sql.NullString
+		updated_at    sql.NullString
+	)
+
+	query := `SELECT 
+		id, 
+		branch_id,
+		user_login,
+		birthday, 
+		gender,
+		fullname,
+		email,
+		phone,
+		user_password,
+		salary,
+		start_working,
+		end_working,
+		created_at, 
+		updated_at
+		FROM administrators WHERE user_login = $1 AND deleted_at is null`
+
+	row := c.db.QueryRow(ctx, query, login)
+
+	err := row.Scan(
+		&administrator.Id,
+		&administrator.BranchId,
+		&administrator.UserLogin,
+		&birthday,
+		&administrator.Gender,
+		&administrator.Fullname,
+		&administrator.Email,
+		&administrator.Phone,
+		&administrator.UserPassword,
+		&administrator.Salary,
+		&start_working,
+		&end_working,
+		&created_at,
+		&updated_at,
+	)
+
+	if err != nil {
+		log.Println("failed to scan administrator by LOGIN from database", logger.Error(err))
+		return &adm.GetAdministratorByLogin{}, err
+	}
+
+	administrator.Birthday = pkg.NullStringToString(birthday)
+	administrator.StartWorking = pkg.NullStringToString(start_working)
+	administrator.EndWorking = pkg.NullStringToString(end_working)
+	administrator.CreatedAt = pkg.NullStringToString(created_at)
+	administrator.UpdatedAt = pkg.NullStringToString(updated_at)
+
+	return &administrator, nil
+}
+
+func (c *administratorRepo) GetPassword(ctx context.Context, login string) (string, error) {
+	var hashedPass string
+
+	query := `SELECT user_password
+	FROM administrators
+	WHERE user_login = $1 AND deleted_at is null`
+
+	err := c.db.QueryRow(ctx, query, login).Scan(&hashedPass)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", errors.New("incorrect login")
+		} else {
+			log.Println("failed to get administrator password from database", logger.Error(err))
+			return "", err
+		}
+	}
+
+	return hashedPass, nil
 }

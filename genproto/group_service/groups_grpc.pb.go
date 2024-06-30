@@ -28,6 +28,7 @@ type GroupServiceClient interface {
 	GetList(ctx context.Context, in *GetListGroupRequest, opts ...grpc.CallOption) (*GetListGroupResponse, error)
 	Update(ctx context.Context, in *UpdateGroup, opts ...grpc.CallOption) (*GetGroup, error)
 	Delete(ctx context.Context, in *GroupPrimaryKey, opts ...grpc.CallOption) (*empty.Empty, error)
+	Check(ctx context.Context, in *GroupPrimaryKey, opts ...grpc.CallOption) (*CheckGroupResp, error)
 }
 
 type groupServiceClient struct {
@@ -83,6 +84,15 @@ func (c *groupServiceClient) Delete(ctx context.Context, in *GroupPrimaryKey, op
 	return out, nil
 }
 
+func (c *groupServiceClient) Check(ctx context.Context, in *GroupPrimaryKey, opts ...grpc.CallOption) (*CheckGroupResp, error) {
+	out := new(CheckGroupResp)
+	err := c.cc.Invoke(ctx, "/group_service_go.GroupService/Check", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GroupServiceServer is the server API for GroupService service.
 // All implementations should embed UnimplementedGroupServiceServer
 // for forward compatibility
@@ -92,6 +102,7 @@ type GroupServiceServer interface {
 	GetList(context.Context, *GetListGroupRequest) (*GetListGroupResponse, error)
 	Update(context.Context, *UpdateGroup) (*GetGroup, error)
 	Delete(context.Context, *GroupPrimaryKey) (*empty.Empty, error)
+	Check(context.Context, *GroupPrimaryKey) (*CheckGroupResp, error)
 }
 
 // UnimplementedGroupServiceServer should be embedded to have forward compatible implementations.
@@ -112,6 +123,9 @@ func (UnimplementedGroupServiceServer) Update(context.Context, *UpdateGroup) (*G
 }
 func (UnimplementedGroupServiceServer) Delete(context.Context, *GroupPrimaryKey) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedGroupServiceServer) Check(context.Context, *GroupPrimaryKey) (*CheckGroupResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Check not implemented")
 }
 
 // UnsafeGroupServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -215,6 +229,24 @@ func _GroupService_Delete_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GroupService_Check_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GroupPrimaryKey)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).Check(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/group_service_go.GroupService/Check",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).Check(ctx, req.(*GroupPrimaryKey))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GroupService_ServiceDesc is the grpc.ServiceDesc for GroupService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -241,6 +273,10 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _GroupService_Delete_Handler,
+		},
+		{
+			MethodName: "Check",
+			Handler:    _GroupService_Check_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

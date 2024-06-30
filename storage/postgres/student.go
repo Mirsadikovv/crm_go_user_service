@@ -3,13 +3,16 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
-	tc "go_user_service/genproto/student_service"
+	stud "go_user_service/genproto/student_service"
 	"go_user_service/pkg"
 	"go_user_service/pkg/hash"
+	"go_user_service/pkg/logger"
 	"go_user_service/storage"
 	"log"
 
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/google/uuid"
@@ -36,8 +39,13 @@ func generateStudentLogin(db *pgxpool.Pool, ctx context.Context) (string, error)
 	return userLogin, nil
 }
 
-func (c *studentRepo) Create(ctx context.Context, req *tc.CreateStudent) (*tc.GetStudent, error) {
-
+func (c *studentRepo) Create(ctx context.Context, req *stud.CreateStudent) (*stud.GetStudent, error) {
+	var finished_at sql.NullString
+	if req.FinishedAt == "" {
+		finished_at = sql.NullString{Valid: false}
+	} else {
+		finished_at = sql.NullString{String: req.FinishedAt, Valid: true}
+	}
 	id := uuid.NewString()
 	pasword, err := hash.HashPassword(req.UserPassword)
 	if err != nil {
@@ -76,13 +84,13 @@ func (c *studentRepo) Create(ctx context.Context, req *tc.CreateStudent) (*tc.Ge
 		pasword,
 		req.PaidSum,
 		req.StartedAt,
-		req.FinishedAt)
+		finished_at)
 	if err != nil {
 		log.Println("error while creating student", comtag)
 		return nil, err
 	}
 
-	student, err := c.GetById(ctx, &tc.StudentPrimaryKey{Id: id})
+	student, err := c.GetById(ctx, &stud.StudentPrimaryKey{Id: id})
 	if err != nil {
 		log.Println("error while getting student by id")
 		return nil, err
@@ -90,8 +98,13 @@ func (c *studentRepo) Create(ctx context.Context, req *tc.CreateStudent) (*tc.Ge
 	return student, nil
 }
 
-func (c *studentRepo) Update(ctx context.Context, req *tc.UpdateStudent) (*tc.GetStudent, error) {
-
+func (c *studentRepo) Update(ctx context.Context, req *stud.UpdateStudent) (*stud.GetStudent, error) {
+	var finished_at sql.NullString
+	if req.FinishedAt == "" {
+		finished_at = sql.NullString{Valid: false}
+	} else {
+		finished_at = sql.NullString{String: req.FinishedAt, Valid: true}
+	}
 	_, err := c.db.Exec(ctx, `
 		UPDATE students SET
 		group_id = $1,
@@ -114,14 +127,14 @@ func (c *studentRepo) Update(ctx context.Context, req *tc.UpdateStudent) (*tc.Ge
 		req.Phone,
 		req.PaidSum,
 		req.StartedAt,
-		req.FinishedAt,
+		finished_at,
 		req.Id)
 	if err != nil {
 		log.Println("error while updating student")
 		return nil, err
 	}
 
-	student, err := c.GetById(ctx, &tc.StudentPrimaryKey{Id: req.Id})
+	student, err := c.GetById(ctx, &stud.StudentPrimaryKey{Id: req.Id})
 	if err != nil {
 		log.Println("error while getting student by id")
 		return nil, err
@@ -129,8 +142,9 @@ func (c *studentRepo) Update(ctx context.Context, req *tc.UpdateStudent) (*tc.Ge
 	return student, nil
 }
 
-func (c *studentRepo) GetAll(ctx context.Context, req *tc.GetListStudentRequest) (*tc.GetListStudentResponse, error) {
-	students := tc.GetListStudentResponse{}
+func (c *studentRepo) GetAll(ctx context.Context, req *stud.GetListStudentRequest) (*stud.GetListStudentResponse, error) {
+	students := stud.GetListStudentResponse{}
+
 	var (
 		created_at  sql.NullString
 		updated_at  sql.NullString
@@ -152,7 +166,7 @@ func (c *studentRepo) GetAll(ctx context.Context, req *tc.GetListStudentRequest)
 				email,
 				phone,
 				paid_sum,
-				start_at,
+				started_at,
 				finished_at,
 				created_at,
 				updated_at
@@ -169,7 +183,7 @@ func (c *studentRepo) GetAll(ctx context.Context, req *tc.GetListStudentRequest)
 	defer rows.Close()
 	for rows.Next() {
 		var (
-			student tc.GetStudent
+			student stud.GetStudent
 		)
 		if err = rows.Scan(
 			&student.Id,
@@ -204,9 +218,9 @@ func (c *studentRepo) GetAll(ctx context.Context, req *tc.GetListStudentRequest)
 	return &students, nil
 }
 
-func (c *studentRepo) GetById(ctx context.Context, id *tc.StudentPrimaryKey) (*tc.GetStudent, error) {
+func (c *studentRepo) GetById(ctx context.Context, id *stud.StudentPrimaryKey) (*stud.GetStudent, error) {
 	var (
-		student     tc.GetStudent
+		student     stud.GetStudent
 		created_at  sql.NullString
 		updated_at  sql.NullString
 		started_at  sql.NullString
@@ -223,7 +237,7 @@ func (c *studentRepo) GetById(ctx context.Context, id *tc.StudentPrimaryKey) (*t
 				email,
 				phone,
 				paid_sum,
-				start_at,
+				started_at,
 				finished_at,
 				created_at,
 				updated_at
@@ -256,7 +270,7 @@ func (c *studentRepo) GetById(ctx context.Context, id *tc.StudentPrimaryKey) (*t
 	return &student, nil
 }
 
-func (c *studentRepo) Delete(ctx context.Context, id *tc.StudentPrimaryKey) (emptypb.Empty, error) {
+func (c *studentRepo) Delete(ctx context.Context, id *stud.StudentPrimaryKey) (emptypb.Empty, error) {
 
 	_, err := c.db.Exec(ctx, `
 		UPDATE students SET
@@ -269,4 +283,150 @@ func (c *studentRepo) Delete(ctx context.Context, id *tc.StudentPrimaryKey) (emp
 		return emptypb.Empty{}, err
 	}
 	return emptypb.Empty{}, nil
+}
+
+func (c *studentRepo) Check(ctx context.Context, id *stud.StudentPrimaryKey) (*stud.CheckStudentResp, error) {
+	query := `SELECT EXISTS (
+                SELECT 1
+                FROM students
+                WHERE id = $1 AND deleted_at IS NULL
+            )`
+
+	var exists bool
+	err := c.db.QueryRow(ctx, query, id.Id).Scan(&exists)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &stud.CheckStudentResp{
+		Check: exists,
+	}
+
+	return resp, nil
+}
+
+func (c *studentRepo) ChangePassword(ctx context.Context, pass *stud.StudentChangePassword) (*stud.StudentChangePasswordResp, error) {
+	var hashedPass string
+	var resp stud.StudentChangePasswordResp
+	query := `SELECT user_password
+	FROM students
+	WHERE user_login = $1 AND deleted_at is null`
+
+	err := c.db.QueryRow(ctx, query,
+		pass.UserLogin,
+	).Scan(&hashedPass)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("incorrect login")
+		}
+		log.Println("failed to get student password from database", logger.Error(err))
+		return nil, err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPass), []byte(pass.OldPassword))
+	if err != nil {
+		return nil, errors.New("password mismatch")
+	}
+
+	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(pass.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		log.Println("failed to generate student new password", logger.Error(err))
+		return nil, err
+	}
+
+	query = `UPDATE students SET 
+		user_password = $1, 
+		updated_at = NOW() 
+	WHERE user_login = $2 AND deleted_at is null`
+
+	_, err = c.db.Exec(ctx, query, newHashedPassword, pass.UserLogin)
+	if err != nil {
+		log.Println("failed to change student password in database", logger.Error(err))
+		return nil, err
+	}
+	resp.Comment = "Password changed successfully"
+
+	return &resp, nil
+}
+
+func (c *studentRepo) GetByLogin(ctx context.Context, login string) (*stud.GetStudentByLogin, error) {
+	var (
+		student     stud.GetStudentByLogin
+		birthday    sql.NullString
+		started_at  sql.NullString
+		finished_at sql.NullString
+		created_at  sql.NullString
+		updated_at  sql.NullString
+	)
+
+	query := `SELECT 
+		id, 
+		branch_id,
+		user_login,
+		birthday, 
+		gender,
+		fullname,
+		email,
+		phone,
+		user_password,
+		paid_sum,
+		started_at,
+		finished_at,
+		created_at, 
+		updated_at
+		FROM students WHERE user_login = $1 AND deleted_at is null`
+
+	row := c.db.QueryRow(ctx, query, login)
+
+	err := row.Scan(
+		&student.Id,
+		&student.GroupId,
+		&student.UserLogin,
+		&birthday,
+		&student.Gender,
+		&student.Fullname,
+		&student.Email,
+		&student.Phone,
+		&student.UserPassword,
+		&student.PaidSum,
+		&started_at,
+		&finished_at,
+		&created_at,
+		&updated_at,
+	)
+
+	if err != nil {
+		log.Println("failed to scan student by LOGIN from database", logger.Error(err))
+		return &stud.GetStudentByLogin{}, err
+	}
+
+	student.Birthday = pkg.NullStringToString(birthday)
+	student.StartedAt = pkg.NullStringToString(started_at)
+	student.FinishedAt = pkg.NullStringToString(finished_at)
+	student.CreatedAt = pkg.NullStringToString(created_at)
+	student.UpdatedAt = pkg.NullStringToString(updated_at)
+
+	return &student, nil
+}
+
+func (c *studentRepo) GetPassword(ctx context.Context, login string) (string, error) {
+	var hashedPass string
+
+	query := `SELECT user_password
+	FROM students
+	WHERE user_login = $1 AND deleted_at is null`
+
+	err := c.db.QueryRow(ctx, query, login).Scan(&hashedPass)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", errors.New("incorrect login")
+		} else {
+			log.Println("failed to get student password from database", logger.Error(err))
+			return "", err
+		}
+	}
+
+	return hashedPass, nil
 }

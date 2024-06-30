@@ -2,7 +2,12 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
+	"errors"
+	"fmt"
 	br "go_user_service/genproto/event_registrate_service"
+	"go_user_service/pkg"
+	"go_user_service/pkg/check"
 	"go_user_service/storage"
 	"log"
 
@@ -23,8 +28,26 @@ func NewEventRegistrateRepo(db *pgxpool.Pool) storage.EventRegistrateRepoI {
 }
 
 func (c *eventRegistrateRepo) Create(ctx context.Context, req *br.CreateEventRegistrate) (*br.GetEventRegistrate, error) {
+	var start_time sql.NullString
 	id := uuid.NewString()
+	query := `
+			SELECT
+			start_time
+		FROM events
+		WHERE id = $1 AND deleted_at is null`
 
+	rows := c.db.QueryRow(ctx, query, req.EventId)
+
+	if err := rows.Scan(
+		&start_time); err != nil {
+		return nil, err
+	}
+	hoursUntil, err := check.CheckDeadline(pkg.NullStringToString(start_time))
+	fmt.Println(hoursUntil, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<ыы", start_time)
+	if hoursUntil-5 < 3.0 {
+		log.Println("error while creating event registrate", err)
+		return nil, errors.New("less than 3 hours left before the event starts")
+	}
 	comtag, err := c.db.Exec(ctx, `
 		INSERT INTO event_registrate (
 			id,
@@ -36,6 +59,7 @@ func (c *eventRegistrateRepo) Create(ctx context.Context, req *br.CreateEventReg
 		req.EventId,
 		req.StudentId,
 	)
+
 	if err != nil {
 		log.Println("error while creating event", comtag)
 		return nil, err
@@ -83,11 +107,9 @@ func (c *eventRegistrateRepo) GetById(ctx context.Context, id *br.EventRegistrat
 	query := `SELECT
 				id,
 				event_id,
-				student_id,
-				created_at,
-				updated_at
+				student_id
 			FROM event_registrate
-			WHERE id = $1 AND deleted_at IS NULL`
+			WHERE id = $1`
 
 	rows := c.db.QueryRow(ctx, query, id.Id)
 

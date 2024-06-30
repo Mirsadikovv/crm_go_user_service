@@ -27,6 +27,10 @@ type SuperadminServiceClient interface {
 	GetByID(ctx context.Context, in *SuperadminPrimaryKey, opts ...grpc.CallOption) (*GetSuperadmin, error)
 	Update(ctx context.Context, in *UpdateSuperadmin, opts ...grpc.CallOption) (*GetSuperadmin, error)
 	Delete(ctx context.Context, in *SuperadminPrimaryKey, opts ...grpc.CallOption) (*empty.Empty, error)
+	Login(ctx context.Context, in *SuperadminLoginRequest, opts ...grpc.CallOption) (*SuperadminLoginResponse, error)
+	Register(ctx context.Context, in *SuperadminRegisterRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	RegisterConfirm(ctx context.Context, in *SuperadminRegisterConfRequest, opts ...grpc.CallOption) (*SuperadminLoginResponse, error)
+	ChangePassword(ctx context.Context, in *SuperadminChangePassword, opts ...grpc.CallOption) (*SuperadminChangePasswordResp, error)
 }
 
 type superadminServiceClient struct {
@@ -73,6 +77,42 @@ func (c *superadminServiceClient) Delete(ctx context.Context, in *SuperadminPrim
 	return out, nil
 }
 
+func (c *superadminServiceClient) Login(ctx context.Context, in *SuperadminLoginRequest, opts ...grpc.CallOption) (*SuperadminLoginResponse, error) {
+	out := new(SuperadminLoginResponse)
+	err := c.cc.Invoke(ctx, "/superadmin_service_go.SuperadminService/Login", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *superadminServiceClient) Register(ctx context.Context, in *SuperadminRegisterRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/superadmin_service_go.SuperadminService/Register", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *superadminServiceClient) RegisterConfirm(ctx context.Context, in *SuperadminRegisterConfRequest, opts ...grpc.CallOption) (*SuperadminLoginResponse, error) {
+	out := new(SuperadminLoginResponse)
+	err := c.cc.Invoke(ctx, "/superadmin_service_go.SuperadminService/RegisterConfirm", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *superadminServiceClient) ChangePassword(ctx context.Context, in *SuperadminChangePassword, opts ...grpc.CallOption) (*SuperadminChangePasswordResp, error) {
+	out := new(SuperadminChangePasswordResp)
+	err := c.cc.Invoke(ctx, "/superadmin_service_go.SuperadminService/ChangePassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SuperadminServiceServer is the server API for SuperadminService service.
 // All implementations should embed UnimplementedSuperadminServiceServer
 // for forward compatibility
@@ -81,6 +121,10 @@ type SuperadminServiceServer interface {
 	GetByID(context.Context, *SuperadminPrimaryKey) (*GetSuperadmin, error)
 	Update(context.Context, *UpdateSuperadmin) (*GetSuperadmin, error)
 	Delete(context.Context, *SuperadminPrimaryKey) (*empty.Empty, error)
+	Login(context.Context, *SuperadminLoginRequest) (*SuperadminLoginResponse, error)
+	Register(context.Context, *SuperadminRegisterRequest) (*empty.Empty, error)
+	RegisterConfirm(context.Context, *SuperadminRegisterConfRequest) (*SuperadminLoginResponse, error)
+	ChangePassword(context.Context, *SuperadminChangePassword) (*SuperadminChangePasswordResp, error)
 }
 
 // UnimplementedSuperadminServiceServer should be embedded to have forward compatible implementations.
@@ -98,6 +142,18 @@ func (UnimplementedSuperadminServiceServer) Update(context.Context, *UpdateSuper
 }
 func (UnimplementedSuperadminServiceServer) Delete(context.Context, *SuperadminPrimaryKey) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedSuperadminServiceServer) Login(context.Context, *SuperadminLoginRequest) (*SuperadminLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedSuperadminServiceServer) Register(context.Context, *SuperadminRegisterRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedSuperadminServiceServer) RegisterConfirm(context.Context, *SuperadminRegisterConfRequest) (*SuperadminLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterConfirm not implemented")
+}
+func (UnimplementedSuperadminServiceServer) ChangePassword(context.Context, *SuperadminChangePassword) (*SuperadminChangePasswordResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
 }
 
 // UnsafeSuperadminServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -183,6 +239,78 @@ func _SuperadminService_Delete_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SuperadminService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SuperadminLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SuperadminServiceServer).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/superadmin_service_go.SuperadminService/Login",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SuperadminServiceServer).Login(ctx, req.(*SuperadminLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SuperadminService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SuperadminRegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SuperadminServiceServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/superadmin_service_go.SuperadminService/Register",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SuperadminServiceServer).Register(ctx, req.(*SuperadminRegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SuperadminService_RegisterConfirm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SuperadminRegisterConfRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SuperadminServiceServer).RegisterConfirm(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/superadmin_service_go.SuperadminService/RegisterConfirm",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SuperadminServiceServer).RegisterConfirm(ctx, req.(*SuperadminRegisterConfRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SuperadminService_ChangePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SuperadminChangePassword)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SuperadminServiceServer).ChangePassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/superadmin_service_go.SuperadminService/ChangePassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SuperadminServiceServer).ChangePassword(ctx, req.(*SuperadminChangePassword))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SuperadminService_ServiceDesc is the grpc.ServiceDesc for SuperadminService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -205,6 +333,22 @@ var SuperadminService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _SuperadminService_Delete_Handler,
+		},
+		{
+			MethodName: "Login",
+			Handler:    _SuperadminService_Login_Handler,
+		},
+		{
+			MethodName: "Register",
+			Handler:    _SuperadminService_Register_Handler,
+		},
+		{
+			MethodName: "RegisterConfirm",
+			Handler:    _SuperadminService_RegisterConfirm_Handler,
+		},
+		{
+			MethodName: "ChangePassword",
+			Handler:    _SuperadminService_ChangePassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS students (
     fullname VARCHAR(55),
     email VARCHAR(35),
     phone VARCHAR(35),
-    user_password VARCHAR(35),
+    user_password VARCHAR,
     paid_sum DECIMAL,
     started_at DATE DEFAULT NOW(),
     finished_at DATE,

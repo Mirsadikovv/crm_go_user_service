@@ -28,6 +28,10 @@ type ManagerServiceClient interface {
 	GetList(ctx context.Context, in *GetListManagerRequest, opts ...grpc.CallOption) (*GetListManagerResponse, error)
 	Update(ctx context.Context, in *UpdateManager, opts ...grpc.CallOption) (*GetManager, error)
 	Delete(ctx context.Context, in *ManagerPrimaryKey, opts ...grpc.CallOption) (*empty.Empty, error)
+	Login(ctx context.Context, in *ManagerLoginRequest, opts ...grpc.CallOption) (*ManagerLoginResponse, error)
+	Register(ctx context.Context, in *ManagerRegisterRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	RegisterConfirm(ctx context.Context, in *ManagerRegisterConfRequest, opts ...grpc.CallOption) (*ManagerLoginResponse, error)
+	ChangePassword(ctx context.Context, in *ManagerChangePassword, opts ...grpc.CallOption) (*ManagerChangePasswordResp, error)
 }
 
 type managerServiceClient struct {
@@ -83,6 +87,42 @@ func (c *managerServiceClient) Delete(ctx context.Context, in *ManagerPrimaryKey
 	return out, nil
 }
 
+func (c *managerServiceClient) Login(ctx context.Context, in *ManagerLoginRequest, opts ...grpc.CallOption) (*ManagerLoginResponse, error) {
+	out := new(ManagerLoginResponse)
+	err := c.cc.Invoke(ctx, "/manager_service_go.ManagerService/Login", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managerServiceClient) Register(ctx context.Context, in *ManagerRegisterRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/manager_service_go.ManagerService/Register", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managerServiceClient) RegisterConfirm(ctx context.Context, in *ManagerRegisterConfRequest, opts ...grpc.CallOption) (*ManagerLoginResponse, error) {
+	out := new(ManagerLoginResponse)
+	err := c.cc.Invoke(ctx, "/manager_service_go.ManagerService/RegisterConfirm", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managerServiceClient) ChangePassword(ctx context.Context, in *ManagerChangePassword, opts ...grpc.CallOption) (*ManagerChangePasswordResp, error) {
+	out := new(ManagerChangePasswordResp)
+	err := c.cc.Invoke(ctx, "/manager_service_go.ManagerService/ChangePassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ManagerServiceServer is the server API for ManagerService service.
 // All implementations should embed UnimplementedManagerServiceServer
 // for forward compatibility
@@ -92,6 +132,10 @@ type ManagerServiceServer interface {
 	GetList(context.Context, *GetListManagerRequest) (*GetListManagerResponse, error)
 	Update(context.Context, *UpdateManager) (*GetManager, error)
 	Delete(context.Context, *ManagerPrimaryKey) (*empty.Empty, error)
+	Login(context.Context, *ManagerLoginRequest) (*ManagerLoginResponse, error)
+	Register(context.Context, *ManagerRegisterRequest) (*empty.Empty, error)
+	RegisterConfirm(context.Context, *ManagerRegisterConfRequest) (*ManagerLoginResponse, error)
+	ChangePassword(context.Context, *ManagerChangePassword) (*ManagerChangePasswordResp, error)
 }
 
 // UnimplementedManagerServiceServer should be embedded to have forward compatible implementations.
@@ -112,6 +156,18 @@ func (UnimplementedManagerServiceServer) Update(context.Context, *UpdateManager)
 }
 func (UnimplementedManagerServiceServer) Delete(context.Context, *ManagerPrimaryKey) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedManagerServiceServer) Login(context.Context, *ManagerLoginRequest) (*ManagerLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedManagerServiceServer) Register(context.Context, *ManagerRegisterRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedManagerServiceServer) RegisterConfirm(context.Context, *ManagerRegisterConfRequest) (*ManagerLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterConfirm not implemented")
+}
+func (UnimplementedManagerServiceServer) ChangePassword(context.Context, *ManagerChangePassword) (*ManagerChangePasswordResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
 }
 
 // UnsafeManagerServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -215,6 +271,78 @@ func _ManagerService_Delete_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ManagerService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ManagerLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServiceServer).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/manager_service_go.ManagerService/Login",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServiceServer).Login(ctx, req.(*ManagerLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ManagerService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ManagerRegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServiceServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/manager_service_go.ManagerService/Register",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServiceServer).Register(ctx, req.(*ManagerRegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ManagerService_RegisterConfirm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ManagerRegisterConfRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServiceServer).RegisterConfirm(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/manager_service_go.ManagerService/RegisterConfirm",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServiceServer).RegisterConfirm(ctx, req.(*ManagerRegisterConfRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ManagerService_ChangePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ManagerChangePassword)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServiceServer).ChangePassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/manager_service_go.ManagerService/ChangePassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServiceServer).ChangePassword(ctx, req.(*ManagerChangePassword))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ManagerService_ServiceDesc is the grpc.ServiceDesc for ManagerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -241,6 +369,22 @@ var ManagerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _ManagerService_Delete_Handler,
+		},
+		{
+			MethodName: "Login",
+			Handler:    _ManagerService_Login_Handler,
+		},
+		{
+			MethodName: "Register",
+			Handler:    _ManagerService_Register_Handler,
+		},
+		{
+			MethodName: "RegisterConfirm",
+			Handler:    _ManagerService_RegisterConfirm_Handler,
+		},
+		{
+			MethodName: "ChangePassword",
+			Handler:    _ManagerService_ChangePassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

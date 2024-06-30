@@ -89,3 +89,15 @@ func (f *GroupService) Delete(ctx context.Context, req *group_service.GroupPrima
 
 	return &emptypb.Empty{}, nil
 }
+
+func (f *GroupService) Check(ctx context.Context, id *group_service.GroupPrimaryKey) (*group_service.CheckGroupResp, error) {
+	f.log.Info("---GetGroup--->>>", logger.Any("req", id))
+
+	resp, err := f.strg.Group().Check(ctx, id)
+	if err != nil {
+		f.log.Error("---GetGroup--->>>", logger.Error(err))
+		return &group_service.CheckGroupResp{}, err
+	}
+
+	return resp, nil
+}

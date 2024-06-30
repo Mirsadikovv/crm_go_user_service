@@ -3,13 +3,16 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
-	tc "go_user_service/genproto/manager_service"
+	man "go_user_service/genproto/manager_service"
 	"go_user_service/pkg"
 	"go_user_service/pkg/hash"
+	"go_user_service/pkg/logger"
 	"go_user_service/storage"
 	"log"
 
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/google/uuid"
@@ -36,7 +39,7 @@ func generateManagerLogin(db *pgxpool.Pool, ctx context.Context) (string, error)
 	return userLogin, nil
 }
 
-func (c *managerRepo) Create(ctx context.Context, req *tc.CreateManager) (*tc.GetManager, error) {
+func (c *managerRepo) Create(ctx context.Context, req *man.CreateManager) (*man.GetManager, error) {
 	var end_working sql.NullString
 	if req.EndWorking == "" {
 		end_working = sql.NullString{Valid: false}
@@ -86,7 +89,7 @@ func (c *managerRepo) Create(ctx context.Context, req *tc.CreateManager) (*tc.Ge
 		return nil, err
 	}
 
-	manager, err := c.GetById(ctx, &tc.ManagerPrimaryKey{Id: id})
+	manager, err := c.GetById(ctx, &man.ManagerPrimaryKey{Id: id})
 	if err != nil {
 		log.Println("error while getting manager by id")
 		return nil, err
@@ -94,7 +97,7 @@ func (c *managerRepo) Create(ctx context.Context, req *tc.CreateManager) (*tc.Ge
 	return manager, nil
 }
 
-func (c *managerRepo) Update(ctx context.Context, req *tc.UpdateManager) (*tc.GetManager, error) {
+func (c *managerRepo) Update(ctx context.Context, req *man.UpdateManager) (*man.GetManager, error) {
 	var end_working sql.NullString
 	if req.EndWorking == "" {
 		end_working = sql.NullString{Valid: false}
@@ -130,7 +133,7 @@ func (c *managerRepo) Update(ctx context.Context, req *tc.UpdateManager) (*tc.Ge
 		return nil, err
 	}
 
-	manager, err := c.GetById(ctx, &tc.ManagerPrimaryKey{Id: req.Id})
+	manager, err := c.GetById(ctx, &man.ManagerPrimaryKey{Id: req.Id})
 	if err != nil {
 		log.Println("error while getting manager by id")
 		return nil, err
@@ -138,8 +141,8 @@ func (c *managerRepo) Update(ctx context.Context, req *tc.UpdateManager) (*tc.Ge
 	return manager, nil
 }
 
-func (c *managerRepo) GetAll(ctx context.Context, req *tc.GetListManagerRequest) (*tc.GetListManagerResponse, error) {
-	managers := tc.GetListManagerResponse{}
+func (c *managerRepo) GetAll(ctx context.Context, req *man.GetListManagerRequest) (*man.GetListManagerResponse, error) {
+	managers := man.GetListManagerResponse{}
 	var (
 		created_at    sql.NullString
 		updated_at    sql.NullString
@@ -178,7 +181,7 @@ func (c *managerRepo) GetAll(ctx context.Context, req *tc.GetListManagerRequest)
 	defer rows.Close()
 	for rows.Next() {
 		var (
-			manager tc.GetManager
+			manager man.GetManager
 		)
 		if err = rows.Scan(
 			&manager.Id,
@@ -213,9 +216,9 @@ func (c *managerRepo) GetAll(ctx context.Context, req *tc.GetListManagerRequest)
 	return &managers, nil
 }
 
-func (c *managerRepo) GetById(ctx context.Context, id *tc.ManagerPrimaryKey) (*tc.GetManager, error) {
+func (c *managerRepo) GetById(ctx context.Context, id *man.ManagerPrimaryKey) (*man.GetManager, error) {
 	var (
-		manager       tc.GetManager
+		manager       man.GetManager
 		created_at    sql.NullString
 		updated_at    sql.NullString
 		start_working sql.NullString
@@ -263,7 +266,7 @@ func (c *managerRepo) GetById(ctx context.Context, id *tc.ManagerPrimaryKey) (*t
 	return &manager, nil
 }
 
-func (c *managerRepo) Delete(ctx context.Context, id *tc.ManagerPrimaryKey) (emptypb.Empty, error) {
+func (c *managerRepo) Delete(ctx context.Context, id *man.ManagerPrimaryKey) (emptypb.Empty, error) {
 
 	_, err := c.db.Exec(ctx, `
 		UPDATE managers SET
@@ -276,4 +279,131 @@ func (c *managerRepo) Delete(ctx context.Context, id *tc.ManagerPrimaryKey) (emp
 		return emptypb.Empty{}, err
 	}
 	return emptypb.Empty{}, nil
+}
+
+/////////////////////////////////////////////
+
+func (c *managerRepo) ChangePassword(ctx context.Context, pass *man.ManagerChangePassword) (*man.ManagerChangePasswordResp, error) {
+	var hashedPass string
+	var resp man.ManagerChangePasswordResp
+	query := `SELECT user_password
+	FROM managers
+	WHERE user_login = $1 AND deleted_at is null`
+
+	err := c.db.QueryRow(ctx, query,
+		pass.UserLogin,
+	).Scan(&hashedPass)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("incorrect login")
+		}
+		log.Println("failed to get manager password from database", logger.Error(err))
+		return nil, err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPass), []byte(pass.OldPassword))
+	if err != nil {
+		return nil, errors.New("password mismatch")
+	}
+
+	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(pass.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		log.Println("failed to generate manager new password", logger.Error(err))
+		return nil, err
+	}
+
+	query = `UPDATE managers SET 
+		user_password = $1, 
+		updated_at = NOW() 
+	WHERE user_login = $2 AND deleted_at is null`
+
+	_, err = c.db.Exec(ctx, query, newHashedPassword, pass.UserLogin)
+	if err != nil {
+		log.Println("failed to change manager password in database", logger.Error(err))
+		return nil, err
+	}
+	resp.Comment = "Password changed successfully"
+	return &resp, nil
+}
+
+func (c *managerRepo) GetByLogin(ctx context.Context, login string) (*man.GetManagerByLogin, error) {
+	var (
+		manager       man.GetManagerByLogin
+		birthday      sql.NullString
+		start_working sql.NullString
+		end_working   sql.NullString
+		created_at    sql.NullString
+		updated_at    sql.NullString
+	)
+
+	query := `SELECT 
+		id, 
+		branch_id,
+		user_login,
+		birthday, 
+		gender,
+		fullname,
+		email,
+		phone,
+		user_password,
+		salary,
+		start_working,
+		end_working,
+		created_at, 
+		updated_at
+		FROM managers WHERE user_login = $1 AND deleted_at is null`
+
+	row := c.db.QueryRow(ctx, query, login)
+
+	err := row.Scan(
+		&manager.Id,
+		&manager.BranchId,
+		&manager.UserLogin,
+		&birthday,
+		&manager.Gender,
+		&manager.Fullname,
+		&manager.Email,
+		&manager.Phone,
+		&manager.UserPassword,
+		&manager.Salary,
+		&start_working,
+		&end_working,
+		&created_at,
+		&updated_at,
+	)
+
+	if err != nil {
+		log.Println("failed to scan manager by LOGIN from database", logger.Error(err))
+		return &man.GetManagerByLogin{}, err
+	}
+
+	manager.Birthday = pkg.NullStringToString(birthday)
+	manager.StartWorking = pkg.NullStringToString(start_working)
+	manager.EndWorking = pkg.NullStringToString(end_working)
+	manager.CreatedAt = pkg.NullStringToString(created_at)
+	manager.UpdatedAt = pkg.NullStringToString(updated_at)
+
+	return &manager, nil
+}
+
+func (c *managerRepo) GetPassword(ctx context.Context, login string) (string, error) {
+	var hashedPass string
+
+	query := `SELECT user_password
+	FROM managers
+	WHERE user_login = $1 AND deleted_at is null`
+
+	err := c.db.QueryRow(ctx, query, login).Scan(&hashedPass)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", errors.New("incorrect login")
+		} else {
+			log.Println("failed to get manager password from database", logger.Error(err))
+			return "", err
+		}
+	}
+
+	return hashedPass, nil
 }
