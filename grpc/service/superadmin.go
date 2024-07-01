@@ -103,7 +103,7 @@ func (a *SuperadminService) Login(ctx context.Context, loginRequest *superadmin_
 	m := make(map[interface{}]interface{})
 
 	m["user_id"] = superadmin.Id
-	m["user_role"] = config.TEACHER_ROLE
+	m["user_role"] = config.SUPERADMIN_ROLE
 
 	accessToken, refreshToken, err := jwt.GenJWT(m)
 	if err != nil {
@@ -122,7 +122,7 @@ func (a *SuperadminService) Register(ctx context.Context, loginRequest *superadm
 
 	otpCode := pkg.GenerateOTP()
 
-	msg := fmt.Sprintf("Your otp code is: %v, for registering RENT_CAR. Don't give it to anyone", otpCode)
+	msg := fmt.Sprintf("Your otp code is: %v, for registering CRM system. Don't give it to anyone", otpCode)
 
 	err := a.redis.SetX(ctx, loginRequest.Mail, otpCode, time.Minute*2)
 	if err != nil {
@@ -160,7 +160,7 @@ func (a *SuperadminService) RegisterConfirm(ctx context.Context, req *superadmin
 	var m = make(map[interface{}]interface{})
 
 	m["user_id"] = id
-	m["user_role"] = config.TEACHER_ROLE
+	m["user_role"] = config.SUPERADMIN_ROLE
 
 	accessToken, refreshToken, err := jwt.GenJWT(m)
 	if err != nil {

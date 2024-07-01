@@ -101,6 +101,7 @@ type GroupRepoI interface {
 	GetById(context.Context, *group_service.GroupPrimaryKey) (*group_service.GetGroup, error)
 	Delete(context.Context, *group_service.GroupPrimaryKey) (emptypb.Empty, error)
 	Check(context.Context, *group_service.GroupPrimaryKey) (*group_service.CheckGroupResp, error)
+	GetTBS(context.Context, *group_service.GroupPrimaryKey) (*group_service.GetTBSresp, error)
 }
 
 type StudentRepoI interface {
@@ -128,6 +129,7 @@ type EventRegistrateRepoI interface {
 	Update(context.Context, *event_registrate_service.UpdateEventRegistrate) (*event_registrate_service.GetEventRegistrate, error)
 	GetById(context.Context, *event_registrate_service.EventRegistratePrimaryKey) (*event_registrate_service.GetEventRegistrate, error)
 	Delete(context.Context, *event_registrate_service.EventRegistratePrimaryKey) (emptypb.Empty, error)
+	GetStudentEvent(context.Context, *event_registrate_service.GetListEventRegistrateRequest) (*event_registrate_service.GetListEventRegistrateResponse, error)
 }
 
 type IRedisStorage interface {

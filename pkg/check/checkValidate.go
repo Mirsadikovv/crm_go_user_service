@@ -57,3 +57,12 @@ func CheckDeadline(timestamp string) (float64, error) {
 
 	return hoursUntil, nil
 }
+
+// func Is(timestampStr string) (bool, error) {
+// 	timestamp, err := time.Parse(time.RFC3339, timestampStr)
+// 	if err != nil {
+// 		return false, err
+// 	}
+
+// 	return timestamp.Weekday() == time.Sunday, nil
+// }

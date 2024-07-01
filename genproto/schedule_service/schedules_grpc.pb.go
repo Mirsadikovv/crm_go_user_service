@@ -28,6 +28,8 @@ type ScheduleServiceClient interface {
 	GetList(ctx context.Context, in *GetListScheduleRequest, opts ...grpc.CallOption) (*GetListScheduleResponse, error)
 	Update(ctx context.Context, in *UpdateSchedule, opts ...grpc.CallOption) (*GetSchedule, error)
 	Delete(ctx context.Context, in *SchedulePrimaryKey, opts ...grpc.CallOption) (*empty.Empty, error)
+	GetStudentSchedule(ctx context.Context, in *SchedulePrimaryKey, opts ...grpc.CallOption) (*GetStudentSchedules, error)
+	GetForWeek(ctx context.Context, in *GetWeekScheduleRequest, opts ...grpc.CallOption) (*GetWeekScheduleResponse, error)
 }
 
 type scheduleServiceClient struct {
@@ -83,6 +85,24 @@ func (c *scheduleServiceClient) Delete(ctx context.Context, in *SchedulePrimaryK
 	return out, nil
 }
 
+func (c *scheduleServiceClient) GetStudentSchedule(ctx context.Context, in *SchedulePrimaryKey, opts ...grpc.CallOption) (*GetStudentSchedules, error) {
+	out := new(GetStudentSchedules)
+	err := c.cc.Invoke(ctx, "/schedule_service_go.ScheduleService/GetStudentSchedule", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scheduleServiceClient) GetForWeek(ctx context.Context, in *GetWeekScheduleRequest, opts ...grpc.CallOption) (*GetWeekScheduleResponse, error) {
+	out := new(GetWeekScheduleResponse)
+	err := c.cc.Invoke(ctx, "/schedule_service_go.ScheduleService/GetForWeek", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ScheduleServiceServer is the server API for ScheduleService service.
 // All implementations should embed UnimplementedScheduleServiceServer
 // for forward compatibility
@@ -92,6 +112,8 @@ type ScheduleServiceServer interface {
 	GetList(context.Context, *GetListScheduleRequest) (*GetListScheduleResponse, error)
 	Update(context.Context, *UpdateSchedule) (*GetSchedule, error)
 	Delete(context.Context, *SchedulePrimaryKey) (*empty.Empty, error)
+	GetStudentSchedule(context.Context, *SchedulePrimaryKey) (*GetStudentSchedules, error)
+	GetForWeek(context.Context, *GetWeekScheduleRequest) (*GetWeekScheduleResponse, error)
 }
 
 // UnimplementedScheduleServiceServer should be embedded to have forward compatible implementations.
@@ -112,6 +134,12 @@ func (UnimplementedScheduleServiceServer) Update(context.Context, *UpdateSchedul
 }
 func (UnimplementedScheduleServiceServer) Delete(context.Context, *SchedulePrimaryKey) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedScheduleServiceServer) GetStudentSchedule(context.Context, *SchedulePrimaryKey) (*GetStudentSchedules, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStudentSchedule not implemented")
+}
+func (UnimplementedScheduleServiceServer) GetForWeek(context.Context, *GetWeekScheduleRequest) (*GetWeekScheduleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetForWeek not implemented")
 }
 
 // UnsafeScheduleServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -215,6 +243,42 @@ func _ScheduleService_Delete_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ScheduleService_GetStudentSchedule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SchedulePrimaryKey)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScheduleServiceServer).GetStudentSchedule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/schedule_service_go.ScheduleService/GetStudentSchedule",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScheduleServiceServer).GetStudentSchedule(ctx, req.(*SchedulePrimaryKey))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScheduleService_GetForWeek_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWeekScheduleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScheduleServiceServer).GetForWeek(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/schedule_service_go.ScheduleService/GetForWeek",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScheduleServiceServer).GetForWeek(ctx, req.(*GetWeekScheduleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ScheduleService_ServiceDesc is the grpc.ServiceDesc for ScheduleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -241,6 +305,14 @@ var ScheduleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _ScheduleService_Delete_Handler,
+		},
+		{
+			MethodName: "GetStudentSchedule",
+			Handler:    _ScheduleService_GetStudentSchedule_Handler,
+		},
+		{
+			MethodName: "GetForWeek",
+			Handler:    _ScheduleService_GetForWeek_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -77,3 +77,15 @@ func (f *EventRegistrateService) Delete(ctx context.Context, req *event_registra
 
 	return &emptypb.Empty{}, nil
 }
+
+func (f *EventRegistrateService) GetStudentEvent(ctx context.Context, req *event_registrate_service.GetListEventRegistrateRequest) (*event_registrate_service.GetListEventRegistrateResponse, error) {
+	f.log.Info("---GetListEventRegistrate--->>>", logger.Any("req", req))
+
+	resp, err := f.strg.EventRegistrate().GetStudentEvent(ctx, req)
+	if err != nil {
+		f.log.Error("---GetListEventRegistrate--->>>", logger.Error(err))
+		return &event_registrate_service.GetListEventRegistrateResponse{}, err
+	}
+
+	return resp, nil
+}

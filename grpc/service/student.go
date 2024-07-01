@@ -127,7 +127,7 @@ func (a *StudentService) Login(ctx context.Context, loginRequest *student_servic
 	m := make(map[interface{}]interface{})
 
 	m["user_id"] = student.Id
-	m["user_role"] = config.TEACHER_ROLE
+	m["user_role"] = config.STUDENT_ROLE
 
 	accessToken, refreshToken, err := jwt.GenJWT(m)
 	if err != nil {
@@ -146,7 +146,7 @@ func (a *StudentService) Register(ctx context.Context, loginRequest *student_ser
 
 	otpCode := pkg.GenerateOTP()
 
-	msg := fmt.Sprintf("Your otp code is: %v, for registering RENT_CAR. Don't give it to anyone", otpCode)
+	msg := fmt.Sprintf("Your otp code is: %v, for registering CRM system. Don't give it to anyone", otpCode)
 
 	err := a.redis.SetX(ctx, loginRequest.Mail, otpCode, time.Minute*2)
 	if err != nil {
@@ -184,7 +184,7 @@ func (a *StudentService) RegisterConfirm(ctx context.Context, req *student_servi
 	var m = make(map[interface{}]interface{})
 
 	m["user_id"] = id
-	m["user_role"] = config.TEACHER_ROLE
+	m["user_role"] = config.STUDENT_ROLE
 
 	accessToken, refreshToken, err := jwt.GenJWT(m)
 	if err != nil {

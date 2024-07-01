@@ -172,7 +172,7 @@ func (a *SupportTeacherService) RegisterConfirm(ctx context.Context, req *suppor
 	var m = make(map[interface{}]interface{})
 
 	m["user_id"] = id
-	m["user_role"] = config.TEACHER_ROLE
+	m["user_role"] = config.SUPPORT_TEACHER_ROLE
 
 	accessToken, refreshToken, err := jwt.GenJWT(m)
 	if err != nil {

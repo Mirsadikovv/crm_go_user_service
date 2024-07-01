@@ -10,6 +10,7 @@ import (
 	"go_user_service/pkg/check"
 	"go_user_service/storage"
 	"log"
+	"time"
 
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -26,9 +27,33 @@ func NewEventRegistrateRepo(db *pgxpool.Pool) storage.EventRegistrateRepoI {
 		db: db,
 	}
 }
+func isStudentRegisteredInOtherBranch(db *pgxpool.Pool, ctx context.Context, studentID, branchID, startTime string) (bool, error) {
+	var count int
+	eventStartTime, err := time.Parse(time.RFC3339, startTime)
+	if err != nil {
+		return false, fmt.Errorf("invalid startTime format: %v", err)
+	}
+
+	query := `
+		SELECT COUNT(*)
+		FROM event_registrate er
+		JOIN events e ON er.event_id = e.id
+		WHERE er.student_id = $1
+		AND e.branch_id <> $2
+		AND e.start_time::date = $3::date
+		`
+
+	err = db.QueryRow(ctx, query, studentID, branchID, eventStartTime).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}
 
 func (c *eventRegistrateRepo) Create(ctx context.Context, req *br.CreateEventRegistrate) (*br.GetEventRegistrate, error) {
 	var start_time sql.NullString
+	var branch string
 	id := uuid.NewString()
 	query := `
 			SELECT
@@ -43,11 +68,33 @@ func (c *eventRegistrateRepo) Create(ctx context.Context, req *br.CreateEventReg
 		return nil, err
 	}
 	hoursUntil, err := check.CheckDeadline(pkg.NullStringToString(start_time))
-	fmt.Println(hoursUntil, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<ыы", start_time)
 	if hoursUntil-5 < 3.0 {
 		log.Println("error while creating event registrate", err)
 		return nil, errors.New("less than 3 hours left before the event starts")
 	}
+
+	query1 := `
+			SELECT
+			branch_id
+		FROM events
+		WHERE id = $1 AND deleted_at is null`
+
+	rows2 := c.db.QueryRow(ctx, query1, req.EventId)
+
+	if err := rows2.Scan(
+		&branch); err != nil {
+		return nil, err
+	}
+
+	eventStart := pkg.NullStringToString(start_time)
+
+	_, err = isStudentRegisteredInOtherBranch(c.db, ctx, req.StudentId, branch, eventStart)
+	if err != nil {
+		log.Println("error while registration to event", err)
+	} else {
+		log.Println("registration success")
+	}
+
 	comtag, err := c.db.Exec(ctx, `
 		INSERT INTO event_registrate (
 			id,
@@ -137,4 +184,55 @@ func (c *eventRegistrateRepo) Delete(ctx context.Context, id *br.EventRegistrate
 		return emptypb.Empty{}, err
 	}
 	return emptypb.Empty{}, nil
+}
+
+func (c *eventRegistrateRepo) GetStudentEvent(ctx context.Context, req *br.GetListEventRegistrateRequest) (*br.GetListEventRegistrateResponse, error) {
+	events := br.GetListEventRegistrateResponse{}
+	var (
+		start_time sql.NullString
+		end_time   sql.NullString
+	)
+
+	query := `SELECT
+				e.topic,
+				e.start_time,
+				e.end_time,
+				e.branch_id
+			FROM events e
+			JOIN event_registrate er ON er.event_id =e.id
+			WHERE er.student_id = $1 AND e.deleted_at is null 
+`
+	rows, err := c.db.Query(ctx, query, req.Search)
+
+	if err != nil {
+		log.Println("error while getting registrated events")
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var (
+			event br.GetStudentEventRegistrateResponse
+		)
+		if err = rows.Scan(
+			&event.Topic,
+			&start_time,
+			&end_time,
+			&event.BranchId,
+		); err != nil {
+			return &events, err
+		}
+		event.StartTime = pkg.NullStringToString(start_time)
+		event.EndTime = pkg.NullStringToString(end_time)
+
+		events.Events = append(events.Events, &event)
+	}
+
+	err = c.db.QueryRow(ctx, `  SELECT count(*) FROM events e
+								JOIN event_registrate er ON er.event_id = e.id
+								WHERE er.student_id = $1 AND e.deleted_at is null `, req.Search).Scan(&events.Count)
+	if err != nil {
+		return &events, err
+	}
+
+	return &events, nil
 }

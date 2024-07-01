@@ -27,6 +27,7 @@ type EventRegistrateServiceClient interface {
 	GetByID(ctx context.Context, in *EventRegistratePrimaryKey, opts ...grpc.CallOption) (*GetEventRegistrate, error)
 	Update(ctx context.Context, in *UpdateEventRegistrate, opts ...grpc.CallOption) (*GetEventRegistrate, error)
 	Delete(ctx context.Context, in *EventRegistratePrimaryKey, opts ...grpc.CallOption) (*empty.Empty, error)
+	GetStudentEvent(ctx context.Context, in *GetListEventRegistrateRequest, opts ...grpc.CallOption) (*GetListEventRegistrateResponse, error)
 }
 
 type eventRegistrateServiceClient struct {
@@ -73,6 +74,15 @@ func (c *eventRegistrateServiceClient) Delete(ctx context.Context, in *EventRegi
 	return out, nil
 }
 
+func (c *eventRegistrateServiceClient) GetStudentEvent(ctx context.Context, in *GetListEventRegistrateRequest, opts ...grpc.CallOption) (*GetListEventRegistrateResponse, error) {
+	out := new(GetListEventRegistrateResponse)
+	err := c.cc.Invoke(ctx, "/event_registrate_service_go.EventRegistrateService/GetStudentEvent", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EventRegistrateServiceServer is the server API for EventRegistrateService service.
 // All implementations should embed UnimplementedEventRegistrateServiceServer
 // for forward compatibility
@@ -81,6 +91,7 @@ type EventRegistrateServiceServer interface {
 	GetByID(context.Context, *EventRegistratePrimaryKey) (*GetEventRegistrate, error)
 	Update(context.Context, *UpdateEventRegistrate) (*GetEventRegistrate, error)
 	Delete(context.Context, *EventRegistratePrimaryKey) (*empty.Empty, error)
+	GetStudentEvent(context.Context, *GetListEventRegistrateRequest) (*GetListEventRegistrateResponse, error)
 }
 
 // UnimplementedEventRegistrateServiceServer should be embedded to have forward compatible implementations.
@@ -98,6 +109,9 @@ func (UnimplementedEventRegistrateServiceServer) Update(context.Context, *Update
 }
 func (UnimplementedEventRegistrateServiceServer) Delete(context.Context, *EventRegistratePrimaryKey) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedEventRegistrateServiceServer) GetStudentEvent(context.Context, *GetListEventRegistrateRequest) (*GetListEventRegistrateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStudentEvent not implemented")
 }
 
 // UnsafeEventRegistrateServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -183,6 +197,24 @@ func _EventRegistrateService_Delete_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EventRegistrateService_GetStudentEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetListEventRegistrateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EventRegistrateServiceServer).GetStudentEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/event_registrate_service_go.EventRegistrateService/GetStudentEvent",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EventRegistrateServiceServer).GetStudentEvent(ctx, req.(*GetListEventRegistrateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EventRegistrateService_ServiceDesc is the grpc.ServiceDesc for EventRegistrateService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -205,6 +237,10 @@ var EventRegistrateService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _EventRegistrateService_Delete_Handler,
+		},
+		{
+			MethodName: "GetStudentEvent",
+			Handler:    _EventRegistrateService_GetStudentEvent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

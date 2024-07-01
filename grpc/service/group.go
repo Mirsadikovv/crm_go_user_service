@@ -101,3 +101,15 @@ func (f *GroupService) Check(ctx context.Context, id *group_service.GroupPrimary
 
 	return resp, nil
 }
+
+func (f *GroupService) GetTBS(ctx context.Context, id *group_service.GroupPrimaryKey) (*group_service.GetTBSresp, error) {
+	f.log.Info("---GetGroupINFO--->>>", logger.Any("req", id))
+
+	resp, err := f.strg.Group().GetTBS(ctx, id)
+	if err != nil {
+		f.log.Error("---GetGroupINFO--->>>", logger.Error(err))
+		return &group_service.GetTBSresp{}, err
+	}
+
+	return resp, nil
+}

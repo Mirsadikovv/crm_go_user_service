@@ -29,6 +29,7 @@ type GroupServiceClient interface {
 	Update(ctx context.Context, in *UpdateGroup, opts ...grpc.CallOption) (*GetGroup, error)
 	Delete(ctx context.Context, in *GroupPrimaryKey, opts ...grpc.CallOption) (*empty.Empty, error)
 	Check(ctx context.Context, in *GroupPrimaryKey, opts ...grpc.CallOption) (*CheckGroupResp, error)
+	GetTBS(ctx context.Context, in *GroupPrimaryKey, opts ...grpc.CallOption) (*GetTBSresp, error)
 }
 
 type groupServiceClient struct {
@@ -93,6 +94,15 @@ func (c *groupServiceClient) Check(ctx context.Context, in *GroupPrimaryKey, opt
 	return out, nil
 }
 
+func (c *groupServiceClient) GetTBS(ctx context.Context, in *GroupPrimaryKey, opts ...grpc.CallOption) (*GetTBSresp, error) {
+	out := new(GetTBSresp)
+	err := c.cc.Invoke(ctx, "/group_service_go.GroupService/GetTBS", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GroupServiceServer is the server API for GroupService service.
 // All implementations should embed UnimplementedGroupServiceServer
 // for forward compatibility
@@ -103,6 +113,7 @@ type GroupServiceServer interface {
 	Update(context.Context, *UpdateGroup) (*GetGroup, error)
 	Delete(context.Context, *GroupPrimaryKey) (*empty.Empty, error)
 	Check(context.Context, *GroupPrimaryKey) (*CheckGroupResp, error)
+	GetTBS(context.Context, *GroupPrimaryKey) (*GetTBSresp, error)
 }
 
 // UnimplementedGroupServiceServer should be embedded to have forward compatible implementations.
@@ -126,6 +137,9 @@ func (UnimplementedGroupServiceServer) Delete(context.Context, *GroupPrimaryKey)
 }
 func (UnimplementedGroupServiceServer) Check(context.Context, *GroupPrimaryKey) (*CheckGroupResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Check not implemented")
+}
+func (UnimplementedGroupServiceServer) GetTBS(context.Context, *GroupPrimaryKey) (*GetTBSresp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTBS not implemented")
 }
 
 // UnsafeGroupServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -247,6 +261,24 @@ func _GroupService_Check_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GroupService_GetTBS_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GroupPrimaryKey)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).GetTBS(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/group_service_go.GroupService/GetTBS",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).GetTBS(ctx, req.(*GroupPrimaryKey))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GroupService_ServiceDesc is the grpc.ServiceDesc for GroupService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -277,6 +309,10 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Check",
 			Handler:    _GroupService_Check_Handler,
+		},
+		{
+			MethodName: "GetTBS",
+			Handler:    _GroupService_GetTBS_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

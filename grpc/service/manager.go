@@ -115,7 +115,7 @@ func (a *ManagerService) Login(ctx context.Context, loginRequest *manager_servic
 	m := make(map[interface{}]interface{})
 
 	m["user_id"] = manager.Id
-	m["user_role"] = config.TEACHER_ROLE
+	m["user_role"] = config.MANAGER_ROLE
 
 	accessToken, refreshToken, err := jwt.GenJWT(m)
 	if err != nil {
@@ -134,7 +134,7 @@ func (a *ManagerService) Register(ctx context.Context, loginRequest *manager_ser
 
 	otpCode := pkg.GenerateOTP()
 
-	msg := fmt.Sprintf("Your otp code is: %v, for registering RENT_CAR. Don't give it to anyone", otpCode)
+	msg := fmt.Sprintf("Your otp code is: %v, for registering CRM system. Don't give it to anyone", otpCode)
 
 	err := a.redis.SetX(ctx, loginRequest.Mail, otpCode, time.Minute*2)
 	if err != nil {
@@ -172,7 +172,7 @@ func (a *ManagerService) RegisterConfirm(ctx context.Context, req *manager_servi
 	var m = make(map[interface{}]interface{})
 
 	m["user_id"] = id
-	m["user_role"] = config.TEACHER_ROLE
+	m["user_role"] = config.MANAGER_ROLE
 
 	accessToken, refreshToken, err := jwt.GenJWT(m)
 	if err != nil {
